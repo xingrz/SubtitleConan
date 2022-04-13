@@ -1,12 +1,14 @@
 <template>
-  <div :style="{ textAlign: 'center' }">
-    <img :src="image" />
+  <div :style="{ width: '100%', textAlign: 'center' }">
+    <img :src="image" :style="{ background: `url('${background}')` }" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { Sentence } from '@/utils/parseLyrics';
 import { computed, defineProps } from 'vue';
+
+import { Sentence } from '@/utils/parseLyrics';
+import generateCanvas from '@/utils/generateCanvas';
 
 const props = defineProps<{
   kanjiFont: string;
@@ -16,6 +18,8 @@ const props = defineProps<{
   lineHeight: number;
   sentence: Sentence;
 }>();
+
+const background = generateCanvas(10, '#EEE');
 
 const image = computed(() => {
   const canvas = document.createElement('canvas');
@@ -34,7 +38,7 @@ const image = computed(() => {
 
   canvas.width = measurement.reduce((width, { kanjiWidth }) => {
     return width + kanjiWidth;
-  }, 0);
+  }, 20);
   canvas.height = props.lineHeight;
 
   measurement.reduce((offset, { kanji, kanjiWidth, hinagara, hinagaraWidth }) => {
@@ -45,7 +49,7 @@ const image = computed(() => {
       ctx.fillText(hinagara, offset + kanjiWidth / 2 - hinagaraWidth / 2, props.hinagaraTop);
     }
     return offset + kanjiWidth;
-  }, 0);
+  }, 10);
 
   return canvas.toDataURL();
 });
