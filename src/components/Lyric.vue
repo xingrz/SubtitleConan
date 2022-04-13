@@ -10,17 +10,34 @@ import { computed, defineProps } from 'vue';
 import { Sentence } from '@/utils/parseLyrics';
 import generateCanvas from '@/utils/generateCanvas';
 
+export interface Shadow {
+  color?: string;
+  blur?: number;
+  offsetX?: number;
+  offsetY?: number;
+}
+
+export interface Stroke {
+  color?: string;
+  width?: number;
+}
+
+export interface Style {
+  font: string;
+  height: number;
+  bottom: number;
+}
+
 const props = defineProps<{
   canvasWidth?: number;
   canvasHeight?: number;
 
-  kanjiFont: string;
-  kanjiHeight: number;
-  kanjiBottom: number;
+  color: string;
+  shadow?: Shadow;
+  stroke?: Stroke;
 
-  hinagaraFont: string;
-  hinagaraHeight: number;
-  hinagaraBottom: number;
+  kanji: Style;
+  hinagara: Style;
 
   sentence: Sentence;
 }>();
@@ -37,8 +54,8 @@ const image = computed(() => {
   }
 
   const measurement = props.sentence.map(({ kanji, hinagara }) => {
-    const kanjiWidth = measure(kanji, props.kanjiFont);
-    const hinagaraWidth = hinagara ? measure(hinagara, props.hinagaraFont) : undefined;
+    const kanjiWidth = measure(kanji, props.kanji.font);
+    const hinagaraWidth = hinagara ? measure(hinagara, props.hinagara.font) : undefined;
     return { kanji, hinagara, kanjiWidth, hinagaraWidth };
   });
 
@@ -46,18 +63,36 @@ const image = computed(() => {
     return width + kanjiWidth;
   }, 0);
 
-  const realHeight = props.hinagaraHeight + props.hinagaraBottom + props.kanjiHeight + props.kanjiBottom * 2;
+  const realHeight = props.hinagara.height + props.hinagara.bottom + props.kanji.height + props.kanji.bottom * 2;
 
   canvas.width = props.canvasWidth || realWidth;
   canvas.height = props.canvasHeight || realHeight;
 
+  ctx.fillStyle = props.color;
+
+  if (props.shadow) {
+    ctx.shadowColor = props.shadow.color || 'transparent';
+    ctx.shadowBlur = props.shadow.blur || 0;
+    ctx.shadowOffsetX = props.shadow.offsetX || 0;
+    ctx.shadowOffsetY = props.shadow.offsetY || 0;
+  }
+
+  if (props.stroke) {
+    ctx.strokeStyle = props.stroke.color || 'transparent';
+    ctx.lineWidth = props.stroke.width || 0;
+  }
+
   measurement.reduce((offset, { kanji, kanjiWidth, hinagara, hinagaraWidth }) => {
-    ctx.font = props.kanjiFont;
-    ctx.fillText(kanji, offset, canvas.height - props.kanjiBottom);
+    const x = offset;
+    const y = canvas.height - props.kanji.bottom;
+    ctx.font = props.kanji.font;
+    if (props.stroke?.width) ctx.strokeText(kanji, x, y);
+    ctx.fillText(kanji, x, y);
     if (hinagara && hinagaraWidth) {
       const x = offset + kanjiWidth / 2 - hinagaraWidth / 2;
-      const y = canvas.height - props.kanjiBottom - props.kanjiHeight - props.hinagaraBottom;
-      ctx.font = props.hinagaraFont;
+      const y = canvas.height - props.kanji.bottom - props.kanji.height - props.hinagara.bottom;
+      ctx.font = props.hinagara.font;
+      if (props.stroke?.width) ctx.strokeText(hinagara, x, y);
       ctx.fillText(hinagara, x, y);
     }
     return offset + kanjiWidth;
