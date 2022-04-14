@@ -49,9 +49,11 @@ const props = defineProps<{
 
 const background = generateCanvas(10, '#EEE');
 
+const canvas = document.createElement('canvas');
+
 const image = computed(() => {
-  const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d')!;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   function measure(text: string, font: string) {
     ctx.font = font;
