@@ -75,6 +75,8 @@ const image = computed(() => {
   canvas.width = props.canvasWidth || realWidth;
   canvas.height = props.canvasHeight || realHeight;
 
+  ctx.textBaseline = 'bottom';
+
   applyShadow(ctx, props.shadow);
   applyStroke(ctx, props.stroke);
 
