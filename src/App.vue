@@ -15,7 +15,7 @@
       </a-tab-pane>
 
       <a-tab-pane key="style" tab="样式">
-        <a-row :gutter="[32, 16]">
+        <a-row :gutter="[32, 16]" :style="{ maxWidth: '1080px' }">
           <a-col :span="12">
             <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
               <h4>汉字</h4>
@@ -132,7 +132,11 @@
             <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
               <h4>填充</h4>
               <a-form-item label="颜色">
-                <a-input v-model:value="colorValue" prefix="#" class="monospace" :style="{ width: '7em' }" />
+                <a-row type="flex" :gutter="[8]">
+                  <a-col flex="7em">
+                    <a-input v-model:value="colorValue" prefix="#" class="monospace" />
+                  </a-col>
+                </a-row>
               </a-form-item>
             </a-form>
           </a-col>
@@ -140,14 +144,14 @@
       </a-tab-pane>
 
       <a-tab-pane key="effects" tab="效果">
-        <a-row :gutter="[32, 16]">
+        <a-row :gutter="[32, 16]" :style="{ maxWidth: '1080px' }">
           <a-col :span="12">
             <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
               <h4>阴影</h4>
               <a-form-item label="颜色">
                 <a-row type="flex" :gutter="[8]">
-                  <a-col flex="6em">
-                    <a-input v-model:value="shadow.color" class="monospace" :style="{ width: '7em' }" prefix="#" />
+                  <a-col flex="7em">
+                    <a-input v-model:value="shadow.color" prefix="#" class="monospace" />
                   </a-col>
                   <a-col flex="8em">
                     <a-input-number v-model:value="shadow.opacity" addon-before="%" :min="0" :max="100"
@@ -194,8 +198,8 @@
               <h4>描边</h4>
               <a-form-item label="颜色">
                 <a-row type="flex" :gutter="[8]">
-                  <a-col flex="6em">
-                    <a-input v-model:value="stroke.color" class="monospace" :style="{ width: '7em' }" prefix="#" />
+                  <a-col flex="7em">
+                    <a-input v-model:value="stroke.color" prefix="#" class="monospace" />
                   </a-col>
                   <a-col flex="8em">
                     <a-input-number v-model:value="stroke.opacity" addon-before="%" :min="0" :max="100"
@@ -222,7 +226,7 @@
       </a-tab-pane>
 
       <a-tab-pane key="canvas" tab="画布">
-        <a-row :gutter="[32, 16]">
+        <a-row :gutter="[32, 16]" :style="{ maxWidth: '1080px' }">
           <a-col :span="12">
             <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
               <h4>画布大小</h4>
@@ -230,7 +234,7 @@
                 <a-row type="flex" :gutter="[8]" align="middle">
                   <a-col flex="10em">
                     <a-input-number v-model:value="canvas.width" :disabled="canvas.clipWidth && !background.enabled"
-                      addon-after="px" class="monospace" :style="{ width: '10em' }" />
+                      addon-after="px" class="monospace" />
                   </a-col>
                   <a-col>
                     <a-checkbox v-model:checked="canvas.clipWidth" :disabled="background.enabled">
@@ -243,7 +247,7 @@
                 <a-row type="flex" :gutter="[8]" align="middle">
                   <a-col flex="10em">
                     <a-input-number v-model:value="canvas.height" :disabled="canvas.clipHeight && !background.enabled"
-                      addon-after="px" class="monospace" :style="{ width: '10em' }" />
+                      addon-after="px" class="monospace" />
                   </a-col>
                   <a-col>
                     <a-checkbox v-model:checked="canvas.clipHeight" :disabled="background.enabled">
