@@ -17,6 +17,7 @@ export interface Style {
   font: string;
   height: number;
   spacing: number;
+  scale: number;
   bottom: number;
 }
 
@@ -59,11 +60,11 @@ const measurement = computed(() => {
   }
 
   const slices: SliceMeasurement[] = props.sentence.map(({ kanjis, hinagaras }) => {
-    const kanjiWidths = kanjis.map((kanji) => measure(kanji, props.kanji.font));
+    const kanjiWidths = kanjis.map((kanji) => measure(kanji, props.kanji.font) * props.kanji.scale);
     const kanjiSliceWidth = kanjiWidths.reduce((sliceWidth, width) => sliceWidth + width,
       props.kanji.spacing * (kanjiWidths.length - 1));
 
-    const hinagaraWidths = hinagaras?.map((hinagara) => measure(hinagara, props.hinagara.font));
+    const hinagaraWidths = hinagaras?.map((hinagara) => measure(hinagara, props.hinagara.font) * props.hinagara.scale);
     const hinagaraSliceWidth = hinagaraWidths?.reduce((sliceWidth, width) => sliceWidth + width,
       props.hinagara.spacing * (hinagaraWidths.length - 1));
 
@@ -133,23 +134,29 @@ function drawText(ctx: CanvasRenderingContext2D, drawFn: FillTextFn | StrokeText
     const { kanjiWidths, kanjiSliceWidth, hinagaraWidths, hinagaraSliceWidth } = slices[i];
 
     // draw kanji
+    ctx.save();
+    ctx.scale(props.kanji.scale, 1);
     ctx.font = props.kanji.font;
     const y = ctx.canvas.height - props.kanji.bottom;
     kanjis.reduce((x, kanji, j) => {
       const width = kanjiWidths[j];
-      drawFn.apply(ctx, [kanji, x, y]);
+      drawFn.apply(ctx, [kanji, x / props.kanji.scale, y]);
       return x + width + props.kanji.spacing;
     }, offset);
+    ctx.restore();
 
     // draw hinagara
     if (hinagaras && hinagaraWidths && hinagaraSliceWidth) {
+      ctx.save();
+      ctx.scale(props.hinagara.scale, 1);
       ctx.font = props.hinagara.font;
       const y = ctx.canvas.height - props.kanji.bottom - props.kanji.height - props.hinagara.bottom;
       hinagaras.reduce((x, hinagara, j) => {
         const width = hinagaraWidths[j];
-        drawFn.apply(ctx, [hinagara, x, y]);
+        drawFn.apply(ctx, [hinagara, x / props.hinagara.scale, y]);
         return x + width + props.hinagara.spacing;
       }, offset + kanjiSliceWidth / 2 - hinagaraSliceWidth / 2);
+      ctx.restore();
     }
 
     return offset + kanjiSliceWidth + props.kanji.spacing;
