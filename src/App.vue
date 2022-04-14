@@ -6,50 +6,82 @@
       </a-tab-pane>
 
       <a-tab-pane key="style" tab="样式">
-        <a-row :gutter="[16, 16]">
+        <a-row :gutter="[32, 16]">
           <a-col :span="12">
-            <a-form :label-col="{ style: { width: '60px', textAlign: 'left' } }" :wrapper-col="{ span: 24 }">
+            <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
               <h4>汉字</h4>
               <a-form-item label="字体">
-                <a-input-group>
-                  <a-input v-model:value="kanjiFont.family" class="monospace" :style="{ width: '16em' }" />
-                  <a-select v-model:value="kanjiFont.weight" :options="fontWeightOptions"
-                    :style="{ marginLeft: '8px', width: '8em' }" />
-                </a-input-group>
+                <a-row type="flex" :gutter="[8]">
+                  <a-col flex="auto">
+                    <a-input v-model:value="kanjiFont.family" />
+                  </a-col>
+                  <a-col flex="8em">
+                    <a-select v-model:value="kanjiFont.weight" :options="fontWeightOptions" />
+                  </a-col>
+                </a-row>
               </a-form-item>
               <a-form-item label="字号">
-                <a-input-number v-model:value="kanjiFont.size" addon-after="px" class="monospace"
-                  :style="{ width: '8em' }" />
+                <a-row type="flex" :gutter="[8]">
+                  <a-col flex="10em">
+                    <a-input-number v-model:value="kanjiFont.size" :min="0" addon-after="px" class="monospace" />
+                  </a-col>
+                  <a-col flex="auto" :style="{ maxWidth: '200px' }">
+                    <a-slider v-model:value="kanjiFont.size" :min="0" :max="100" />
+                  </a-col>
+                </a-row>
               </a-form-item>
               <a-form-item label="边距">
-                <a-slider :min="-20" :max="400" v-model:value="kanjiBottom" />
+                <a-row type="flex" :gutter="[8]">
+                  <a-col flex="10em">
+                    <a-input-number v-model:value="kanjiBottom" :min="-20" addon-after="px" class="monospace" />
+                  </a-col>
+                  <a-col flex="auto" :style="{ maxWidth: '200px' }">
+                    <a-slider v-model:value="kanjiBottom" :min="-20" :max="100" />
+                  </a-col>
+                </a-row>
               </a-form-item>
             </a-form>
           </a-col>
           <a-col :span="12">
-            <a-form :label-col="{ style: { width: '60px', textAlign: 'left' } }" :wrapper-col="{ span: 24 }">
+            <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
               <h4>注音</h4>
               <a-form-item label="字体">
-                <a-input-group>
-                  <a-input v-model:value="hinagaraFont.family" class="monospace" :style="{ width: '16em' }" />
-                  <a-select v-model:value="hinagaraFont.weight" :options="fontWeightOptions"
-                    :style="{ marginLeft: '8px', width: '8em' }" />
-                </a-input-group>
+                <a-row type="flex" :gutter="[8]">
+                  <a-col flex="auto">
+                    <a-input v-model:value="hinagaraFont.family" />
+                  </a-col>
+                  <a-col flex="8em">
+                    <a-select v-model:value="hinagaraFont.weight" :options="fontWeightOptions" />
+                  </a-col>
+                </a-row>
               </a-form-item>
               <a-form-item label="字号">
-                <a-input-number v-model:value="hinagaraFont.size" addon-after="px" class="monospace"
-                  :style="{ width: '8em' }" />
+                <a-row type="flex" :gutter="[8]">
+                  <a-col flex="10em">
+                    <a-input-number v-model:value="hinagaraFont.size" :min="0" addon-after="px" class="monospace" />
+                  </a-col>
+                  <a-col flex="auto" :style="{ maxWidth: '200px' }">
+                    <a-slider v-model:value="hinagaraFont.size" :min="0" :max="100" />
+                  </a-col>
+                </a-row>
               </a-form-item>
               <a-form-item label="边距">
-                <a-slider :min="-20" :max="200" v-model:value="hinagaraBottom" />
+                <a-row type="flex" :gutter="[8]">
+                  <a-col flex="10em">
+                    <a-input-number v-model:value="hinagaraBottom" :min="-20" addon-after="px" class="monospace" />
+                  </a-col>
+                  <a-col flex="auto" :style="{ maxWidth: '200px' }">
+                    <a-slider v-model:value="hinagaraBottom" :min="-20" :max="100" />
+                  </a-col>
+                </a-row>
               </a-form-item>
             </a-form>
           </a-col>
           <a-col :span="12">
-            <a-form :label-col="{ style: { width: '60px', textAlign: 'left' } }" :wrapper-col="{ span: 24 }">
+            <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
               <h4>填充</h4>
               <a-form-item label="颜色">
-                <a-input v-model:value="colorValue" class="monospace" :style="{ width: '7em' }" prefix="#" />
+                <a-input v-model:value="colorValue" prefix="#" class="monospace" :style="{ width: '7em' }" />
               </a-form-item>
             </a-form>
           </a-col>
@@ -57,43 +89,81 @@
       </a-tab-pane>
 
       <a-tab-pane key="effects" tab="效果">
-        <a-row :gutter="[16, 16]">
+        <a-row :gutter="[32, 16]">
           <a-col :span="12">
-            <a-form :label-col="{ style: { width: '60px', textAlign: 'left' } }" :wrapper-col="{ span: 24 }">
+            <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
               <h4>阴影</h4>
               <a-form-item label="颜色">
-                <a-input-group>
-                  <a-input v-model:value="shadow.color" class="monospace" :style="{ width: '7em' }" prefix="#" />
-                  <a-input-number v-model:value="shadow.opacity" addon-before="%" :min="0" :max="100" class="monospace"
-                    :style="{ marginLeft: '8px', width: '7em' }" />
-                </a-input-group>
+                <a-row type="flex" :gutter="[8]">
+                  <a-col flex="6em">
+                    <a-input v-model:value="shadow.color" class="monospace" :style="{ width: '7em' }" prefix="#" />
+                  </a-col>
+                  <a-col flex="8em">
+                    <a-input-number v-model:value="shadow.opacity" addon-before="%" :min="0" :max="100"
+                      class="monospace" />
+                  </a-col>
+                  <a-col flex="auto" :style="{ maxWidth: '100px' }">
+                    <a-slider v-model:value="shadow.opacity" :min="0" :max="100" />
+                  </a-col>
+                </a-row>
               </a-form-item>
               <a-form-item label="偏移">
-                <a-input-group>
-                  <a-input-number v-model:value="shadow.offsetX" addon-after="px" class="monospace"
-                    :style="{ width: '7em' }" />
-                  <a-input-number v-model:value="shadow.offsetY" addon-after="px" class="monospace"
-                    :style="{ marginLeft: '8px', width: '7em' }" />
-                </a-input-group>
+                <a-row type="flex" :gutter="[8]">
+                  <a-col flex="8em">
+                    <a-input-number v-model:value="shadow.offsetX" addon-after="px" class="monospace" />
+                  </a-col>
+                  <a-col flex="auto" :style="{ maxWidth: '200px' }">
+                    <a-slider v-model:value="shadow.offsetX" :min="-10" :max="10" />
+                  </a-col>
+                </a-row>
+                <a-row type="flex" :gutter="[8]" :style="{ marginTop: '8px' }">
+                  <a-col flex="8em">
+                    <a-input-number v-model:value="shadow.offsetY" addon-after="px" class="monospace" />
+                  </a-col>
+                  <a-col flex="auto" :style="{ maxWidth: '200px' }">
+                    <a-slider v-model:value="shadow.offsetY" :min="-10" :max="10" />
+                  </a-col>
+                </a-row>
               </a-form-item>
               <a-form-item label="模糊">
-                <a-slider :min="0" :max="100" v-model:value="shadow.blur" />
+                <a-row type="flex" :gutter="[8]">
+                  <a-col flex="8em">
+                    <a-input-number v-model:value="shadow.blur" addon-after="px" :min="0" :max="100"
+                      class="monospace" />
+                  </a-col>
+                  <a-col flex="auto" :style="{ maxWidth: '200px' }">
+                    <a-slider v-model:value="shadow.blur" :min="0" :max="100" />
+                  </a-col>
+                </a-row>
               </a-form-item>
             </a-form>
           </a-col>
           <a-col :span="12">
-            <a-form :label-col="{ style: { width: '60px', textAlign: 'left' } }" :wrapper-col="{ span: 14 }">
+            <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
               <h4>描边</h4>
               <a-form-item label="颜色">
-                <a-input-group>
-                  <a-input v-model:value="stroke.color" class="monospace" :style="{ width: '7em' }" prefix="#" />
-                  <a-input-number v-model:value="stroke.opacity" addon-before="%" :min="0" :max="100" class="monospace"
-                    :style="{ marginLeft: '8px', width: '7em' }" />
-                </a-input-group>
+                <a-row type="flex" :gutter="[8]">
+                  <a-col flex="6em">
+                    <a-input v-model:value="stroke.color" class="monospace" :style="{ width: '7em' }" prefix="#" />
+                  </a-col>
+                  <a-col flex="8em">
+                    <a-input-number v-model:value="stroke.opacity" addon-before="%" :min="0" :max="100"
+                      class="monospace" />
+                  </a-col>
+                  <a-col flex="auto" :style="{ maxWidth: '100px' }">
+                    <a-slider v-model:value="stroke.opacity" :min="0" :max="100" />
+                  </a-col>
+                </a-row>
               </a-form-item>
               <a-form-item label="宽度">
-                <a-input-number v-model:value="stroke.width" addon-after="px" :min="0" class="monospace"
-                  :style="{ width: '7em' }" />
+                <a-row type="flex" :gutter="[8]">
+                  <a-col flex="8em">
+                    <a-input-number v-model:value="stroke.width" addon-after="px" :min="0" class="monospace" />
+                  </a-col>
+                  <a-col flex="auto" :style="{ maxWidth: '200px' }">
+                    <a-slider v-model:value="stroke.width" :min="0" :max="20" />
+                  </a-col>
+                </a-row>
               </a-form-item>
             </a-form>
           </a-col>
@@ -101,7 +171,7 @@
       </a-tab-pane>
 
       <a-tab-pane key="canvas" tab="画布">
-        <a-form :label-col="{ style: { width: '60px', textAlign: 'left' } }" :wrapper-col="{ span: 14 }">
+        <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-item label="宽度">
             <a-input-group>
               <a-input-number v-model:value="canvasWidth" :disabled="canvasWidthAuto" addon-after="px" class="monospace"
@@ -141,6 +211,9 @@ import Lyric, { Shadow, Stroke, Style } from '@/components/Lyric.vue';
 import parseLyrics from '@/utils/parseLyrics';
 import rgba from '@/utils/rgba';
 import { Font, FontWeight, toFontStyle } from '@/utils/font';
+
+const labelCol = { style: { width: '60px', textAlign: 'left' } };
+const wrapperCol = { span: 24, style: { maxWidth: '400px' } };
 
 const canvasWidth = ref(1920);
 const canvasWidthAuto = ref(false);
