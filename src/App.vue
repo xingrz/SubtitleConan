@@ -39,6 +39,16 @@
                   </a-col>
                 </a-row>
               </a-form-item>
+              <a-form-item label="间距">
+                <a-row type="flex" :gutter="[8]">
+                  <a-col flex="8em">
+                    <a-input-number v-model:value="kanjiAttrs.spacing" :min="-10" addon-after="px" class="monospace" />
+                  </a-col>
+                  <a-col flex="auto" :style="{ maxWidth: '200px' }">
+                    <a-slider v-model:value="kanjiAttrs.spacing" :min="-10" :max="10" />
+                  </a-col>
+                </a-row>
+              </a-form-item>
               <a-form-item label="边距">
                 <a-row type="flex" :gutter="[8]">
                   <a-col flex="8em">
@@ -71,6 +81,17 @@
                   </a-col>
                   <a-col flex="auto" :style="{ maxWidth: '200px' }">
                     <a-slider v-model:value="hinagaraFont.size" :min="0" :max="100" />
+                  </a-col>
+                </a-row>
+              </a-form-item>
+              <a-form-item label="间距">
+                <a-row type="flex" :gutter="[8]">
+                  <a-col flex="8em">
+                    <a-input-number v-model:value="hinagaraAttrs.spacing" :min="-10" addon-after="px"
+                      class="monospace" />
+                  </a-col>
+                  <a-col flex="auto" :style="{ maxWidth: '200px' }">
+                    <a-slider v-model:value="hinagaraAttrs.spacing" :min="-10" :max="10" />
                   </a-col>
                 </a-row>
               </a-form-item>
@@ -274,12 +295,14 @@ const kanjiFont = reactive<Font>({
 });
 
 const kanjiAttrs = reactive({
+  spacing: -2,
   bottom: 10,
 });
 
 const kanjiStyle = computed<Style>(() => ({
   font: toFontStyle(kanjiFont),
   height: kanjiFont.size,
+  spacing: kanjiAttrs.spacing,
   bottom: kanjiAttrs.bottom,
 }));
 
@@ -290,12 +313,14 @@ const hinagaraFont = reactive<Font>({
 });
 
 const hinagaraAttrs = reactive({
+  spacing: -2,
   bottom: 0,
 });
 
 const hinagaraStyle = computed<Style>(() => ({
   font: toFontStyle(hinagaraFont),
   height: hinagaraFont.size,
+  spacing: hinagaraAttrs.spacing,
   bottom: hinagaraAttrs.bottom,
 }));
 

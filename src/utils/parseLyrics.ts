@@ -1,9 +1,9 @@
-export interface Character {
-  kanji: string;
-  hinagara?: string;
+export interface Slice {
+  kanjis: string[];
+  hinagaras?: string[];
 }
 
-export type Sentence = Character[];
+export type Sentence = Slice[];
 export type Lyric = Sentence[];
 
 export default function parseLyrics(text: string): Lyric {
@@ -14,9 +14,9 @@ export default function parseLyrics(text: string): Lyric {
     return chars.map((c) => {
       let m;
       if (m = c.match(/^\[([^\|]+)\|([^\|]+)\]$/)) {
-        return { kanji: m[1], hinagara: m[2] };
+        return { kanjis: m[1].split(''), hinagaras: m[2].split('') };
       } else {
-        return { kanji: c };
+        return { kanjis: c.split('') };
       }
     });
   });

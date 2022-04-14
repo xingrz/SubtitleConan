@@ -16,12 +16,15 @@ import { applyStroke, Stroke } from '@/utils/stroke';
 export interface Style {
   font: string;
   height: number;
+  spacing: number;
   bottom: number;
 }
 
-interface CharacterBox {
-  kanjiWidth: number;
-  hinagaraWidth?: number;
+interface SliceMeasurement {
+  kanjiWidths: number[];
+  kanjiSliceWidth: number;
+  hinagaraWidths?: number[];
+  hinagaraSliceWidth?: number;
 }
 
 const props = defineProps<{
@@ -55,22 +58,27 @@ const measurement = computed(() => {
     return ctx.measureText(text).width;
   }
 
-  const characters: CharacterBox[] = props.sentence.map(({ kanji, hinagara }) => {
-    const kanjiWidth = measure(kanji, props.kanji.font);
-    const hinagaraWidth = hinagara ? measure(hinagara, props.hinagara.font) : undefined;
-    return { kanjiWidth, hinagaraWidth };
+  const slices: SliceMeasurement[] = props.sentence.map(({ kanjis, hinagaras }) => {
+    const kanjiWidths = kanjis.map((kanji) => measure(kanji, props.kanji.font));
+    const kanjiSliceWidth = kanjiWidths.reduce((sliceWidth, width) => sliceWidth + width,
+      props.kanji.spacing * (kanjiWidths.length - 1));
+
+    const hinagaraWidths = hinagaras?.map((hinagara) => measure(hinagara, props.hinagara.font));
+    const hinagaraSliceWidth = hinagaraWidths?.reduce((sliceWidth, width) => sliceWidth + width,
+      props.hinagara.spacing * (hinagaraWidths.length - 1));
+
+    return { kanjiWidths, kanjiSliceWidth, hinagaraWidths, hinagaraSliceWidth };
   });
 
-  const realWidth = characters.reduce((width, { kanjiWidth }) => {
-    return width + kanjiWidth;
-  }, 0);
+  const realWidth = slices.reduce((width, { kanjiSliceWidth }) => width + kanjiSliceWidth,
+    props.kanji.spacing * (slices.length - 1));
 
   const realHeight = props.hinagara.height + props.hinagara.bottom + props.kanji.height + props.kanji.bottom * 2;
 
   const targetWidth = props.canvasWidth || realWidth;
   const targetHeight = props.canvasHeight || realHeight;
 
-  return { characters, realWidth, realHeight, targetWidth, targetHeight };
+  return { slices, realWidth, realHeight, targetWidth, targetHeight };
 });
 
 const scaledSize = computed(() => ({
@@ -82,7 +90,7 @@ const image = computed(() => {
   const ctx = canvas.getContext('2d')!;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const { characters, realWidth, targetWidth, targetHeight } = measurement.value;
+  const { slices, realWidth, targetWidth, targetHeight } = measurement.value;
 
   canvas.width = targetWidth;
   canvas.height = targetHeight;
@@ -95,21 +103,21 @@ const image = computed(() => {
   // Draw shadow
   if (props.shadow?.color) {
     ctx.fillStyle = props.shadow.color;
-    drawText(ctx, ctx.fillText, props.sentence, characters, realWidth);
-    drawText(ctx, ctx.strokeText, props.sentence, characters, realWidth);
+    drawText(ctx, ctx.fillText, props.sentence, slices, realWidth);
+    drawText(ctx, ctx.strokeText, props.sentence, slices, realWidth);
   }
 
   // Draw outline
   if (props.stroke?.color) {
     ctx.shadowColor = 'transparent';
-    drawText(ctx, ctx.strokeText, props.sentence, characters, realWidth);
+    drawText(ctx, ctx.strokeText, props.sentence, slices, realWidth);
   }
 
   // Draw fill
   ctx.shadowColor = 'transparent';
   ctx.strokeStyle = 'transparent';
   ctx.fillStyle = props.color;
-  drawText(ctx, ctx.fillText, props.sentence, characters, realWidth);
+  drawText(ctx, ctx.fillText, props.sentence, slices, realWidth);
 
   return canvas.toDataURL();
 });
@@ -120,20 +128,31 @@ emit('render', image.value);
 type FillTextFn = typeof CanvasRenderingContext2D.prototype.fillText;
 type StrokeTextFn = typeof CanvasRenderingContext2D.prototype.strokeText;
 function drawText(ctx: CanvasRenderingContext2D, drawFn: FillTextFn | StrokeTextFn,
-  sentence: Sentence, characters: CharacterBox[], realWidth: number) {
-  sentence.reduce((offset, { kanji, hinagara }, i) => {
-    const { kanjiWidth, hinagaraWidth } = characters[i];
-    const x = offset;
-    const y = ctx.canvas.height - props.kanji.bottom;
+  sentence: Sentence, slices: SliceMeasurement[], realWidth: number) {
+  sentence.reduce((offset, { kanjis, hinagaras }, i) => {
+    const { kanjiWidths, kanjiSliceWidth, hinagaraWidths, hinagaraSliceWidth } = slices[i];
+
+    // draw kanji
     ctx.font = props.kanji.font;
-    drawFn.apply(ctx, [kanji, x, y]);
-    if (hinagara && hinagaraWidth) {
-      const x = offset + kanjiWidth / 2 - hinagaraWidth / 2;
-      const y = ctx.canvas.height - props.kanji.bottom - props.kanji.height - props.hinagara.bottom;
+    const y = ctx.canvas.height - props.kanji.bottom;
+    kanjis.reduce((x, kanji, j) => {
+      const width = kanjiWidths[j];
+      drawFn.apply(ctx, [kanji, x, y]);
+      return x + width + props.kanji.spacing;
+    }, offset);
+
+    // draw hinagara
+    if (hinagaras && hinagaraWidths && hinagaraSliceWidth) {
       ctx.font = props.hinagara.font;
-      drawFn.apply(ctx, [hinagara, x, y]);
+      const y = ctx.canvas.height - props.kanji.bottom - props.kanji.height - props.hinagara.bottom;
+      hinagaras.reduce((x, hinagara, j) => {
+        const width = hinagaraWidths[j];
+        drawFn.apply(ctx, [hinagara, x, y]);
+        return x + width + props.hinagara.spacing;
+      }, offset + kanjiSliceWidth / 2 - hinagaraSliceWidth / 2);
     }
-    return offset + kanjiWidth;
+
+    return offset + kanjiSliceWidth + props.kanji.spacing;
   }, ctx.canvas.width / 2 - realWidth / 2);
 }
 </script>
