@@ -168,5 +168,9 @@ function applyStroke(ctx: CanvasRenderingContext2D, stroke?: Stroke) {
 .lyric {
   width: 100%;
   text-align: center;
+
+  img {
+    box-shadow: rgba(0, 0, 0, 1.0) 0px 4px 8px;
+  }
 }
 </style>
