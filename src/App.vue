@@ -239,7 +239,9 @@ import { DownloadOutlined } from '@ant-design/icons-vue';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 
-import Lyric, { Shadow, Stroke, Style } from '@/components/Lyric.vue';
+import Lyric, { Style } from '@/components/Lyric.vue';
+import { Shadow } from '@/utils/shadow';
+import { Stroke } from '@/utils/stroke';
 import parseLyrics from '@/utils/parseLyrics';
 import rgba from '@/utils/rgba';
 import { Font, FontWeight, toFontStyle } from '@/utils/font';

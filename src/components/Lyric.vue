@@ -10,18 +10,8 @@ import { computed, defineEmits, defineProps, watch } from 'vue';
 
 import { Sentence } from '@/utils/parseLyrics';
 import generateCanvas from '@/utils/generateCanvas';
-
-export interface Shadow {
-  color?: string;
-  blur?: number;
-  offsetX?: number;
-  offsetY?: number;
-}
-
-export interface Stroke {
-  color?: string;
-  width?: number;
-}
+import { applyShadow, Shadow } from '@/utils/shadow';
+import { applyStroke, Stroke } from '@/utils/stroke';
 
 export interface Style {
   font: string;
@@ -145,22 +135,6 @@ function drawText(ctx: CanvasRenderingContext2D, drawFn: FillTextFn | StrokeText
     }
     return offset + kanjiWidth;
   }, ctx.canvas.width / 2 - realWidth / 2);
-}
-
-function applyShadow(ctx: CanvasRenderingContext2D, shadow?: Shadow) {
-  if (shadow) {
-    ctx.shadowColor = shadow.color || 'transparent';
-    ctx.shadowBlur = shadow.blur || 0;
-    ctx.shadowOffsetX = shadow.offsetX || 0;
-    ctx.shadowOffsetY = shadow.offsetY || 0;
-  }
-}
-
-function applyStroke(ctx: CanvasRenderingContext2D, stroke?: Stroke) {
-  if (stroke) {
-    ctx.strokeStyle = stroke.color || 'transparent';
-    ctx.lineWidth = stroke.width || 0;
-  }
 }
 </script>
 
