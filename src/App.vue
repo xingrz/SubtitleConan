@@ -180,34 +180,52 @@
       </a-tab-pane>
 
       <a-tab-pane key="canvas" tab="画布">
-        <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-form-item label="宽度">
-            <a-input-group>
-              <a-input-number v-model:value="canvasWidth" :disabled="canvasWidthAuto" addon-after="px" class="monospace"
-                :style="{ width: '10em' }" />
-              <a-checkbox v-model:checked="canvasWidthAuto" :style="{ marginLeft: '24px', lineHeight: '32px' }">
-                裁切
-              </a-checkbox>
-            </a-input-group>
-          </a-form-item>
-          <a-form-item label="高度">
-            <a-input-group>
-              <a-input-number v-model:value="canvasHeight" :disabled="canvasHeightAuto" addon-after="px"
-                class="monospace" :style="{ width: '10em' }" />
-              <a-checkbox v-model:checked="canvasHeightAuto" :style="{ marginLeft: '24px', lineHeight: '32px' }">
-                裁切
-              </a-checkbox>
-            </a-input-group>
-          </a-form-item>
-        </a-form>
+        <a-row :gutter="[32, 16]">
+          <a-col :span="12">
+            <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
+              <h4>画布大小</h4>
+              <a-form-item label="宽度">
+                <a-input-group>
+                  <a-input-number v-model:value="canvasWidth" :disabled="canvasWidthAuto" addon-after="px"
+                    class="monospace" :style="{ width: '10em' }" />
+                  <a-checkbox v-model:checked="canvasWidthAuto" :style="{ marginLeft: '24px', lineHeight: '32px' }">
+                    裁切
+                  </a-checkbox>
+                </a-input-group>
+              </a-form-item>
+              <a-form-item label="高度">
+                <a-input-group>
+                  <a-input-number v-model:value="canvasHeight" :disabled="canvasHeightAuto" addon-after="px"
+                    class="monospace" :style="{ width: '10em' }" />
+                  <a-checkbox v-model:checked="canvasHeightAuto" :style="{ marginLeft: '24px', lineHeight: '32px' }">
+                    裁切
+                  </a-checkbox>
+                </a-input-group>
+              </a-form-item>
+            </a-form>
+          </a-col>
+          <a-col :span="12">
+            <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
+              <h4>预览</h4>
+              <a-form-item label="缩放">
+                <a-row type="flex" :gutter="[8]">
+                  <a-col flex="auto" :style="{ maxWidth: '300px' }">
+                    <a-slider v-model:value="canvasScale" :min="10" :max="100"
+                      :marks="{ 10: '10%', 25: '25%', 50: '50%', 75: '75%', 100: '100%' }" />
+                  </a-col>
+                </a-row>
+              </a-form-item>
+            </a-form>
+          </a-col>
+        </a-row>
       </a-tab-pane>
     </a-tabs>
   </div>
   <div id="lyrics">
     <div v-for="(lyric, index) in lyrics" :style="{ margin: '10px' }">
       <lyric :canvas-width="canvasWidthAuto ? undefined : canvasWidth"
-        :canvas-height="canvasHeightAuto ? undefined : canvasHeight" :color="color" :shadow="shadowStyle"
-        :stroke="strokeStyle" :kanji="kanjiStyle" :hinagara="hinagaraStyle" :sentence="lyric"
+        :canvas-height="canvasHeightAuto ? undefined : canvasHeight" :canvas-scale="canvasScale" :color="color"
+        :shadow="shadowStyle" :stroke="strokeStyle" :kanji="kanjiStyle" :hinagara="hinagaraStyle" :sentence="lyric"
         @render="(image) => images[index] = image" />
     </div>
   </div>
@@ -232,6 +250,7 @@ const canvasWidth = ref(1920);
 const canvasWidthAuto = ref(false);
 const canvasHeight = ref(1080);
 const canvasHeightAuto = ref(true);
+const canvasScale = ref(100);
 
 const fontWeightOptions = ref<SelectProps['options']>([
   { value: FontWeight.THIN, label: 'Thin' },

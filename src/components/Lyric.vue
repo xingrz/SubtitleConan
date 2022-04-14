@@ -1,13 +1,14 @@
 <template>
-  <div :style="{ width: '100%', textAlign: 'center' }">
-    <img :src="image" :style="{ background: `url('${background}')` }" />
+  <div class="lyric">
+    <img :src="image" :style="{ background: `url('${background}')` }" :width="scaledSize.width"
+      :height="scaledSize.height" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { computed, defineEmits, defineProps, watch } from 'vue';
 
-import { Character, Sentence } from '@/utils/parseLyrics';
+import { Sentence } from '@/utils/parseLyrics';
 import generateCanvas from '@/utils/generateCanvas';
 
 export interface Shadow {
@@ -28,7 +29,7 @@ export interface Style {
   bottom: number;
 }
 
-interface MeasuredCharacter extends Character {
+interface CharacterBox {
   kanjiWidth: number;
   hinagaraWidth?: number;
 }
@@ -36,6 +37,7 @@ interface MeasuredCharacter extends Character {
 const props = defineProps<{
   canvasWidth?: number;
   canvasHeight?: number;
+  canvasScale: number;
 
   color: string;
   shadow?: Shadow;
@@ -55,29 +57,45 @@ const background = generateCanvas(10, '#EEE');
 
 const canvas = document.createElement('canvas');
 
-const image = computed(() => {
+const measurement = computed(() => {
   const ctx = canvas.getContext('2d')!;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   function measure(text: string, font: string) {
     ctx.font = font;
     return ctx.measureText(text).width;
   }
 
-  const measurement: MeasuredCharacter[] = props.sentence.map(({ kanji, hinagara }) => {
+  const characters: CharacterBox[] = props.sentence.map(({ kanji, hinagara }) => {
     const kanjiWidth = measure(kanji, props.kanji.font);
     const hinagaraWidth = hinagara ? measure(hinagara, props.hinagara.font) : undefined;
-    return { kanji, hinagara, kanjiWidth, hinagaraWidth };
+    return { kanjiWidth, hinagaraWidth };
   });
 
-  const realWidth = measurement.reduce((width, { kanjiWidth }) => {
+  const realWidth = characters.reduce((width, { kanjiWidth }) => {
     return width + kanjiWidth;
   }, 0);
 
   const realHeight = props.hinagara.height + props.hinagara.bottom + props.kanji.height + props.kanji.bottom * 2;
 
-  canvas.width = props.canvasWidth || realWidth;
-  canvas.height = props.canvasHeight || realHeight;
+  const targetWidth = props.canvasWidth || realWidth;
+  const targetHeight = props.canvasHeight || realHeight;
+
+  return { characters, realWidth, realHeight, targetWidth, targetHeight };
+});
+
+const scaledSize = computed(() => ({
+  width: measurement.value.targetWidth * (props.canvasScale / 100),
+  height: measurement.value.targetHeight * (props.canvasScale / 100),
+}));
+
+const image = computed(() => {
+  const ctx = canvas.getContext('2d')!;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const { characters, realWidth, targetWidth, targetHeight } = measurement.value;
+
+  canvas.width = targetWidth;
+  canvas.height = targetHeight;
 
   ctx.textBaseline = 'bottom';
 
@@ -87,21 +105,21 @@ const image = computed(() => {
   // Draw shadow
   if (props.shadow?.color) {
     ctx.fillStyle = props.shadow.color;
-    drawText(ctx, ctx.fillText, measurement, realWidth);
-    drawText(ctx, ctx.strokeText, measurement, realWidth);
+    drawText(ctx, ctx.fillText, props.sentence, characters, realWidth);
+    drawText(ctx, ctx.strokeText, props.sentence, characters, realWidth);
   }
 
   // Draw outline
   if (props.stroke?.color) {
     ctx.shadowColor = 'transparent';
-    drawText(ctx, ctx.strokeText, measurement, realWidth);
+    drawText(ctx, ctx.strokeText, props.sentence, characters, realWidth);
   }
 
   // Draw fill
   ctx.shadowColor = 'transparent';
   ctx.strokeStyle = 'transparent';
   ctx.fillStyle = props.color;
-  drawText(ctx, ctx.fillText, measurement, realWidth);
+  drawText(ctx, ctx.fillText, props.sentence, characters, realWidth);
 
   return canvas.toDataURL();
 });
@@ -112,8 +130,9 @@ emit('render', image.value);
 type FillTextFn = typeof CanvasRenderingContext2D.prototype.fillText;
 type StrokeTextFn = typeof CanvasRenderingContext2D.prototype.strokeText;
 function drawText(ctx: CanvasRenderingContext2D, drawFn: FillTextFn | StrokeTextFn,
-  measurement: MeasuredCharacter[], realWidth: number) {
-  measurement.reduce((offset, { kanji, kanjiWidth, hinagara, hinagaraWidth }) => {
+  sentence: Sentence, characters: CharacterBox[], realWidth: number) {
+  sentence.reduce((offset, { kanji, hinagara }, i) => {
+    const { kanjiWidth, hinagaraWidth } = characters[i];
     const x = offset;
     const y = ctx.canvas.height - props.kanji.bottom;
     ctx.font = props.kanji.font;
@@ -144,3 +163,10 @@ function applyStroke(ctx: CanvasRenderingContext2D, stroke?: Stroke) {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.lyric {
+  width: 100%;
+  text-align: center;
+}
+</style>
