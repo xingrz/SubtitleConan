@@ -65,7 +65,7 @@
                     <a-input-number v-model:value="kanjiAttrs.bottom" :min="-20" addon-after="px" class="monospace" />
                   </a-col>
                   <a-col flex="auto" :style="{ maxWidth: '200px' }">
-                    <a-slider v-model:value="kanjiAttrs.bottom" :min="-20" :max="100" />
+                    <a-slider v-model:value="kanjiAttrs.bottom" :min="-20" :max="300" />
                   </a-col>
                 </a-row>
               </a-form-item>
@@ -229,11 +229,11 @@
               <a-form-item label="宽度">
                 <a-row type="flex" :gutter="[8]" align="middle">
                   <a-col flex="10em">
-                    <a-input-number v-model:value="canvas.width" :disabled="canvas.clipWidth" addon-after="px"
-                      class="monospace" :style="{ width: '10em' }" />
+                    <a-input-number v-model:value="canvas.width" :disabled="canvas.clipWidth && !background.enabled"
+                      addon-after="px" class="monospace" :style="{ width: '10em' }" />
                   </a-col>
                   <a-col>
-                    <a-checkbox v-model:checked="canvas.clipWidth">
+                    <a-checkbox v-model:checked="canvas.clipWidth" :disabled="background.enabled">
                       裁切
                     </a-checkbox>
                   </a-col>
@@ -242,11 +242,11 @@
               <a-form-item label="高度">
                 <a-row type="flex" :gutter="[8]" align="middle">
                   <a-col flex="10em">
-                    <a-input-number v-model:value="canvas.height" :disabled="canvas.clipHeight" addon-after="px"
-                      class="monospace" :style="{ width: '10em' }" />
+                    <a-input-number v-model:value="canvas.height" :disabled="canvas.clipHeight && !background.enabled"
+                      addon-after="px" class="monospace" :style="{ width: '10em' }" />
                   </a-col>
                   <a-col>
-                    <a-checkbox v-model:checked="canvas.clipHeight">
+                    <a-checkbox v-model:checked="canvas.clipHeight" :disabled="background.enabled">
                       裁切
                     </a-checkbox>
                   </a-col>
@@ -265,6 +265,27 @@
                   </a-col>
                 </a-row>
               </a-form-item>
+              <a-form-item label="背景">
+                <a-row type="flex" :gutter="[8]">
+                  <a-col>
+                    <a-radio-group v-model:value="background.enabled">
+                      <a-radio-button :value="false">透明</a-radio-button>
+                      <a-radio-button :value="true">视频</a-radio-button>
+                    </a-radio-group>
+                  </a-col>
+                  <a-col flex="auto" v-show="background.enabled">
+                    <a-upload :customRequest="loadPreview" :showUploadList="false">
+                      <a-button type="primary" :loading="preview.loading">选择视频</a-button>
+                    </a-upload>
+                  </a-col>
+                </a-row>
+                <a-row type="flex" :gutter="[8]" :style="{ marginTop: '8px' }"
+                  v-if="background.enabled && preview.duration > 0">
+                  <a-col flex="auto">
+                    <a-slider v-model:value="preview.current" :min="0" :max="preview.duration" />
+                  </a-col>
+                </a-row>
+              </a-form-item>
             </a-form>
           </a-col>
         </a-row>
@@ -275,17 +296,18 @@
     <div v-for="(lyric, index) in lyrics" :style="{ margin: '10px' }">
       <lyric :canvas-width="canvasStyle.width" :canvas-height="canvasStyle.height" :canvas-scale="canvas.scale"
         :color="color" :shadow="shadowStyle" :stroke="strokeStyle" :kanji="kanjiStyle" :hinagara="hinagaraStyle"
-        :sentence="lyric" @render="(image) => images[index] = image" />
+        :sentence="lyric" :background="canvasStyle.background" @render="(image) => images[index] = image" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { SelectProps } from 'ant-design-vue';
 import { DownloadOutlined } from '@ant-design/icons-vue';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import { once } from 'events';
 
 import Lyric, { Style } from '@/components/Lyric.vue';
 import { Shadow } from '@/utils/shadow';
@@ -293,6 +315,7 @@ import { Stroke } from '@/utils/stroke';
 import parseLyrics from '@/utils/parseLyrics';
 import rgba from '@/utils/rgba';
 import { Font, FontWeight, toFontStyle } from '@/utils/font';
+import captureFrame from '@/utils/captureFrame';
 
 const labelCol = { style: { width: '60px', textAlign: 'left' } };
 const wrapperCol = { span: 24, style: { maxWidth: '400px' } };
@@ -305,9 +328,17 @@ const canvas = reactive({
   scale: 100,
 });
 
+const background = reactive<{
+  enabled: boolean;
+  image?: string;
+}>({
+  enabled: false,
+});
+
 const canvasStyle = computed(() => ({
-  width: canvas.clipWidth ? undefined : canvas.width,
-  height: canvas.clipHeight ? undefined : canvas.height,
+  width: canvas.clipWidth && !background.enabled ? undefined : canvas.width,
+  height: canvas.clipHeight && !background.enabled ? undefined : canvas.height,
+  background: background.enabled ? background.image : undefined,
 }));
 
 const fontWeightOptions = ref<SelectProps['options']>([
@@ -412,6 +443,40 @@ async function exportImages() {
 
   exporting.value = false;
 }
+
+const preview = reactive({
+  loading: false,
+  duration: 0,
+  current: 0,
+});
+
+const video = document.createElement('video');
+video.defaultMuted = true;
+
+async function loadPreview({ file }: { file: File }): Promise<void> {
+  preview.loading = true;
+  video.src = URL.createObjectURL(file);
+  await once(video, 'canplaythrough');
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.clipWidth = false;
+  canvas.clipHeight = false;
+
+  preview.duration = video.duration;
+  preview.current = 0;
+  await seekPreview(0);
+
+  preview.loading = false;
+}
+
+async function seekPreview(time: number): Promise<void> {
+  video.currentTime = time;
+  await once(video, 'seeked');
+  background.image = captureFrame(video);
+}
+
+watch(preview, ({ current }) => seekPreview(current));
 </script>
 
 <style lang="scss">

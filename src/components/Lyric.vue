@@ -1,7 +1,10 @@
 <template>
   <div class="lyric">
-    <img :src="image" :style="{ background: `url('${background}')` }" :width="scaledSize.width"
-      :height="scaledSize.height" />
+    <div class="layers" :style="{ width: `${scaledSize.width}px`, height: `${scaledSize.height}px` }">
+      <img v-if="background" :src="background" :width="scaledSize.width" :height="scaledSize.height" />
+      <img :src="image" :style="{ background: background ? 'transparent' : `url('${transparent}')` }"
+        :width="scaledSize.width" :height="scaledSize.height" />
+    </div>
   </div>
 </template>
 
@@ -33,6 +36,8 @@ const props = defineProps<{
   canvasHeight?: number;
   canvasScale: number;
 
+  background?: string;
+
   color: string;
   shadow?: Shadow;
   stroke?: Stroke;
@@ -47,7 +52,7 @@ const emit = defineEmits<{
   (e: 'render', image: string): void;
 }>();
 
-const background = generateCanvas(10, '#EEE');
+const transparent = generateCanvas(10, '#EEE');
 
 const canvas = document.createElement('canvas');
 
@@ -169,8 +174,15 @@ function drawText(ctx: CanvasRenderingContext2D, drawFn: FillTextFn | StrokeText
   width: 100%;
   text-align: center;
 
-  img {
+  .layers {
+    display: inline-block;
+    position: relative;
     box-shadow: rgba(0, 0, 0, 1.0) 0px 4px 8px;
+
+    >* {
+      position: absolute;
+      left: 0;
+    }
   }
 }
 </style>
