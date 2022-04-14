@@ -8,40 +8,40 @@
       <a-tab-pane key="style" tab="样式">
         <a-row :gutter="[16, 16]">
           <a-col :span="12">
-            <a-form :label-col="{ style: { width: '60px', textAlign: 'left' } }" :wrapper-col="{ span: 14 }">
+            <a-form :label-col="{ style: { width: '60px', textAlign: 'left' } }" :wrapper-col="{ span: 24 }">
               <h4>汉字</h4>
               <a-form-item label="字体">
                 <a-input-group>
-                  <a-input v-model:value="kanjiFontFamily" class="monospace" :style="{ width: '16em' }" />
-                  <a-select v-model:value="kanjiFontWeight" :options="fontWeightOptions"
+                  <a-input v-model:value="kanjiFont.family" class="monospace" :style="{ width: '16em' }" />
+                  <a-select v-model:value="kanjiFont.weight" :options="fontWeightOptions"
                     :style="{ marginLeft: '8px', width: '8em' }" />
                 </a-input-group>
               </a-form-item>
               <a-form-item label="字号">
-                <a-input-number v-model:value="kanjiFontSize" addon-after="px" class="monospace"
+                <a-input-number v-model:value="kanjiFont.size" addon-after="px" class="monospace"
                   :style="{ width: '8em' }" />
               </a-form-item>
               <a-form-item label="边距">
-                <a-slider :min="0" :max="200" v-model:value="kanjiBottom" />
+                <a-slider :min="-20" :max="400" v-model:value="kanjiBottom" />
               </a-form-item>
             </a-form>
           </a-col>
           <a-col :span="12">
-            <a-form :label-col="{ style: { width: '60px', textAlign: 'left' } }" :wrapper-col="{ span: 14 }">
+            <a-form :label-col="{ style: { width: '60px', textAlign: 'left' } }" :wrapper-col="{ span: 24 }">
               <h4>注音</h4>
               <a-form-item label="字体">
                 <a-input-group>
-                  <a-input v-model:value="hinagaraFontFamily" class="monospace" :style="{ width: '16em' }" />
-                  <a-select v-model:value="hinagaraFontWeight" :options="fontWeightOptions"
+                  <a-input v-model:value="hinagaraFont.family" class="monospace" :style="{ width: '16em' }" />
+                  <a-select v-model:value="hinagaraFont.weight" :options="fontWeightOptions"
                     :style="{ marginLeft: '8px', width: '8em' }" />
                 </a-input-group>
               </a-form-item>
               <a-form-item label="字号">
-                <a-input-number v-model:value="hinagaraFontSize" addon-after="px" class="monospace"
+                <a-input-number v-model:value="hinagaraFont.size" addon-after="px" class="monospace"
                   :style="{ width: '8em' }" />
               </a-form-item>
               <a-form-item label="边距">
-                <a-slider :min="0" :max="200" v-model:value="hinagaraBottom" />
+                <a-slider :min="-20" :max="200" v-model:value="hinagaraBottom" />
               </a-form-item>
             </a-form>
           </a-col>
@@ -59,25 +59,25 @@
       <a-tab-pane key="effects" tab="效果">
         <a-row :gutter="[16, 16]">
           <a-col :span="12">
-            <a-form :label-col="{ style: { width: '60px', textAlign: 'left' } }" :wrapper-col="{ span: 14 }">
+            <a-form :label-col="{ style: { width: '60px', textAlign: 'left' } }" :wrapper-col="{ span: 24 }">
               <h4>阴影</h4>
               <a-form-item label="颜色">
                 <a-input-group>
-                  <a-input v-model:value="shadowColorValue" class="monospace" :style="{ width: '7em' }" prefix="#" />
-                  <a-input-number v-model:value="shadowColorOpacity" addon-before="%" :min="0" :max="100"
-                    class="monospace" :style="{ marginLeft: '8px', width: '7em' }" />
+                  <a-input v-model:value="shadow.color" class="monospace" :style="{ width: '7em' }" prefix="#" />
+                  <a-input-number v-model:value="shadow.opacity" addon-before="%" :min="0" :max="100" class="monospace"
+                    :style="{ marginLeft: '8px', width: '7em' }" />
                 </a-input-group>
               </a-form-item>
               <a-form-item label="偏移">
                 <a-input-group>
-                  <a-input-number v-model:value="shadowOffsetX" addon-after="px" class="monospace"
+                  <a-input-number v-model:value="shadow.offsetX" addon-after="px" class="monospace"
                     :style="{ width: '7em' }" />
-                  <a-input-number v-model:value="shadowOffsetY" addon-after="px" class="monospace"
+                  <a-input-number v-model:value="shadow.offsetY" addon-after="px" class="monospace"
                     :style="{ marginLeft: '8px', width: '7em' }" />
                 </a-input-group>
               </a-form-item>
               <a-form-item label="模糊">
-                <a-slider :min="0" :max="200" v-model:value="shadowBlur" />
+                <a-slider :min="0" :max="100" v-model:value="shadow.blur" />
               </a-form-item>
             </a-form>
           </a-col>
@@ -86,13 +86,13 @@
               <h4>描边</h4>
               <a-form-item label="颜色">
                 <a-input-group>
-                  <a-input v-model:value="strokeColorValue" class="monospace" :style="{ width: '7em' }" prefix="#" />
-                  <a-input-number v-model:value="strokeColorOpacity" addon-before="%" :min="0" :max="100"
-                    class="monospace" :style="{ marginLeft: '8px', width: '7em' }" />
+                  <a-input v-model:value="stroke.color" class="monospace" :style="{ width: '7em' }" prefix="#" />
+                  <a-input-number v-model:value="stroke.opacity" addon-before="%" :min="0" :max="100" class="monospace"
+                    :style="{ marginLeft: '8px', width: '7em' }" />
                 </a-input-group>
               </a-form-item>
               <a-form-item label="宽度">
-                <a-input-number v-model:value="strokeWidth" addon-after="px" :min="0" class="monospace"
+                <a-input-number v-model:value="stroke.width" addon-after="px" :min="0" class="monospace"
                   :style="{ width: '7em' }" />
               </a-form-item>
             </a-form>
@@ -127,19 +127,20 @@
   <div id="lyrics">
     <div v-for="lyric in lyrics" :style="{ margin: '10px' }">
       <lyric :canvas-width="canvasWidthAuto ? undefined : canvasWidth"
-        :canvas-height="canvasHeightAuto ? undefined : canvasHeight" :color="color" :shadow="shadow" :stroke="stroke"
-        :kanji="kanji" :hinagara="hinagara" :sentence="lyric" />
+        :canvas-height="canvasHeightAuto ? undefined : canvasHeight" :color="color" :shadow="shadowStyle"
+        :stroke="strokeStyle" :kanji="kanjiStyle" :hinagara="hinagaraStyle" :sentence="lyric" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { SelectProps } from 'ant-design-vue';
 
 import Lyric, { Shadow, Stroke, Style } from '@/components/Lyric.vue';
 import parseLyrics from '@/utils/parseLyrics';
 import rgba from '@/utils/rgba';
+import { Font, FontWeight, toFontStyle } from '@/utils/font';
 
 const canvasWidth = ref(1920);
 const canvasWidthAuto = ref(false);
@@ -147,61 +148,71 @@ const canvasHeight = ref(1080);
 const canvasHeightAuto = ref(true);
 
 const fontWeightOptions = ref<SelectProps['options']>([
-  { value: 100, label: 'Thin' },
-  { value: 200, label: 'Extra Light' },
-  { value: 300, label: 'Light' },
-  { value: 400, label: 'Regular' },
-  { value: 500, label: 'Medium' },
-  { value: 600, label: 'Semi Bold' },
-  { value: 700, label: 'Bold' },
-  { value: 800, label: 'Extra Bold' },
-  { value: 900, label: 'Black' },
+  { value: FontWeight.THIN, label: 'Thin' },
+  { value: FontWeight.EXTRA_LIGHT, label: 'Extra Light' },
+  { value: FontWeight.LIGHT, label: 'Light' },
+  { value: FontWeight.REGULAR, label: 'Regular' },
+  { value: FontWeight.MEDIUM, label: 'Medium' },
+  { value: FontWeight.SEMI_BOLD, label: 'Semi Bold' },
+  { value: FontWeight.BOLD, label: 'Bold' },
+  { value: FontWeight.EXTRA_BOLD, label: 'Extra Bold' },
+  { value: FontWeight.BLACK, label: 'Black' },
 ]);
 
-const kanjiFontFamily = ref('A-OTF Shin Go Pro');
-const kanjiFontSize = ref(40);
-const kanjiFontWeight = ref(400);
+const kanjiFont = reactive<Font>({
+  family: 'A-OTF Shin Go Pro',
+  size: 40,
+  weight: FontWeight.REGULAR,
+});
 
-const hinagaraFontFamily = ref('A-OTF Shin Go Pro');
-const hinagaraFontSize = ref(20);
-const hinagaraFontWeight = ref(600);
+const hinagaraFont = reactive<Font>({
+  family: 'A-OTF Shin Go Pro',
+  size: 20,
+  weight: FontWeight.SEMI_BOLD,
+});
 
 const kanjiBottom = ref(10);
 const hinagaraBottom = ref(0);
 
-const kanji = computed<Style>(() => ({
-  font: `${kanjiFontWeight.value} ${kanjiFontSize.value}px "${kanjiFontFamily.value}"`,
-  height: kanjiFontSize.value,
+const kanjiStyle = computed<Style>(() => ({
+  font: toFontStyle(kanjiFont),
+  height: kanjiFont.size,
   bottom: kanjiBottom.value,
 }));
 
-const hinagara = computed<Style>(() => ({
-  font: `${hinagaraFontWeight.value} ${hinagaraFontSize.value}px "${hinagaraFontFamily.value}"`,
-  height: hinagaraFontSize.value,
+const hinagaraStyle = computed<Style>(() => ({
+  font: toFontStyle(hinagaraFont),
+  height: hinagaraFont.size,
   bottom: hinagaraBottom.value,
 }));
 
 const colorValue = ref('FFFFFF');
 const color = computed(() => `#${colorValue.value}`);
 
-const shadowColorValue = ref('000000');
-const shadowColorOpacity = ref(100);
-const shadowBlur = ref(2);
-const shadowOffsetX = ref(2);
-const shadowOffsetY = ref(2);
-const shadow = computed<Shadow>(() => ({
-  color: rgba(shadowColorValue.value, shadowColorOpacity.value / 100),
-  blur: shadowBlur.value,
-  offsetX: shadowOffsetX.value,
-  offsetY: shadowOffsetY.value,
+const shadow = reactive({
+  color: '000000',
+  opacity: 100,
+  blur: 2,
+  offsetX: 2,
+  offsetY: 2,
+});
+
+const shadowStyle = computed<Shadow>(() => ({
+  color: rgba(shadow.color, shadow.opacity / 100),
+  blur: shadow.blur,
+  offsetX: shadow.offsetX,
+  offsetY: shadow.offsetY,
 }));
 
-const strokeColorValue = ref('000000');
-const strokeColorOpacity = ref(100);
-const strokeWidth = ref(0);
-const stroke = computed<Stroke>(() => ({
-  color: rgba(strokeColorValue.value, strokeColorOpacity.value / 100),
-  width: strokeWidth.value,
+const stroke = reactive({
+  color: '000000',
+  opacity: 0,
+  width: 0,
+});
+
+const strokeStyle = computed<Stroke>(() => ({
+  color: rgba(stroke.color, stroke.opacity / 100),
+  width: stroke.width,
 }));
 
 const lyricsText = ref('[君|きみ]と[僕|ぼく]とは[別|べつ]の[人間|いきもの]だから');
