@@ -31,7 +31,7 @@
               </a-form-item>
               <a-form-item label="字号">
                 <a-row type="flex" :gutter="[8]">
-                  <a-col flex="10em">
+                  <a-col flex="8em">
                     <a-input-number v-model:value="kanjiFont.size" :min="0" addon-after="px" class="monospace" />
                   </a-col>
                   <a-col flex="auto" :style="{ maxWidth: '200px' }">
@@ -41,11 +41,11 @@
               </a-form-item>
               <a-form-item label="边距">
                 <a-row type="flex" :gutter="[8]">
-                  <a-col flex="10em">
-                    <a-input-number v-model:value="kanjiBottom" :min="-20" addon-after="px" class="monospace" />
+                  <a-col flex="8em">
+                    <a-input-number v-model:value="kanjiAttrs.bottom" :min="-20" addon-after="px" class="monospace" />
                   </a-col>
                   <a-col flex="auto" :style="{ maxWidth: '200px' }">
-                    <a-slider v-model:value="kanjiBottom" :min="-20" :max="100" />
+                    <a-slider v-model:value="kanjiAttrs.bottom" :min="-20" :max="100" />
                   </a-col>
                 </a-row>
               </a-form-item>
@@ -66,7 +66,7 @@
               </a-form-item>
               <a-form-item label="字号">
                 <a-row type="flex" :gutter="[8]">
-                  <a-col flex="10em">
+                  <a-col flex="8em">
                     <a-input-number v-model:value="hinagaraFont.size" :min="0" addon-after="px" class="monospace" />
                   </a-col>
                   <a-col flex="auto" :style="{ maxWidth: '200px' }">
@@ -76,11 +76,12 @@
               </a-form-item>
               <a-form-item label="边距">
                 <a-row type="flex" :gutter="[8]">
-                  <a-col flex="10em">
-                    <a-input-number v-model:value="hinagaraBottom" :min="-20" addon-after="px" class="monospace" />
+                  <a-col flex="8em">
+                    <a-input-number v-model:value="hinagaraAttrs.bottom" :min="-20" addon-after="px"
+                      class="monospace" />
                   </a-col>
                   <a-col flex="auto" :style="{ maxWidth: '200px' }">
-                    <a-slider v-model:value="hinagaraBottom" :min="-20" :max="100" />
+                    <a-slider v-model:value="hinagaraAttrs.bottom" :min="-20" :max="100" />
                   </a-col>
                 </a-row>
               </a-form-item>
@@ -270,25 +271,30 @@ const kanjiFont = reactive<Font>({
   weight: FontWeight.REGULAR,
 });
 
+const kanjiAttrs = reactive({
+  bottom: 10,
+});
+
+const kanjiStyle = computed<Style>(() => ({
+  font: toFontStyle(kanjiFont),
+  height: kanjiFont.size,
+  bottom: kanjiAttrs.bottom,
+}));
+
 const hinagaraFont = reactive<Font>({
   family: 'A-OTF Shin Go Pro',
   size: 20,
   weight: FontWeight.SEMI_BOLD,
 });
 
-const kanjiBottom = ref(10);
-const hinagaraBottom = ref(0);
-
-const kanjiStyle = computed<Style>(() => ({
-  font: toFontStyle(kanjiFont),
-  height: kanjiFont.size,
-  bottom: kanjiBottom.value,
-}));
+const hinagaraAttrs = reactive({
+  bottom: 0,
+});
 
 const hinagaraStyle = computed<Style>(() => ({
   font: toFontStyle(hinagaraFont),
   height: hinagaraFont.size,
-  bottom: hinagaraBottom.value,
+  bottom: hinagaraAttrs.bottom,
 }));
 
 const colorValue = ref('FFFFFF');
