@@ -1,6 +1,15 @@
 <template>
   <div id="main-nav">
     <a-tabs type="card">
+      <template #rightExtra>
+        <a-button type="primary" :loading="exporting" @click="exportImages">
+          <template #icon>
+            <DownloadOutlined />
+          </template>
+          保存所有图片
+        </a-button>
+      </template>
+
       <a-tab-pane key="lyrics" tab="文本">
         <a-textarea :style="{ fontFamily: 'monospace', height: '200px' }" v-model:value="lyricsText" />
       </a-tab-pane>
@@ -195,10 +204,11 @@
     </a-tabs>
   </div>
   <div id="lyrics">
-    <div v-for="lyric in lyrics" :style="{ margin: '10px' }">
+    <div v-for="(lyric, index) in lyrics" :style="{ margin: '10px' }">
       <lyric :canvas-width="canvasWidthAuto ? undefined : canvasWidth"
         :canvas-height="canvasHeightAuto ? undefined : canvasHeight" :color="color" :shadow="shadowStyle"
-        :stroke="strokeStyle" :kanji="kanjiStyle" :hinagara="hinagaraStyle" :sentence="lyric" />
+        :stroke="strokeStyle" :kanji="kanjiStyle" :hinagara="hinagaraStyle" :sentence="lyric"
+        @render="(image) => images[index] = image" />
     </div>
   </div>
 </template>
@@ -206,6 +216,9 @@
 <script lang="ts" setup>
 import { computed, reactive, ref } from 'vue';
 import { SelectProps } from 'ant-design-vue';
+import { DownloadOutlined } from '@ant-design/icons-vue';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 import Lyric, { Shadow, Stroke, Style } from '@/components/Lyric.vue';
 import parseLyrics from '@/utils/parseLyrics';
@@ -290,6 +303,25 @@ const strokeStyle = computed<Stroke>(() => ({
 
 const lyricsText = ref('[君|きみ]と[僕|ぼく]とは[別|べつ]の[人間|いきもの]だから');
 const lyrics = computed(() => parseLyrics(lyricsText.value));
+
+const images: string[] = [];
+const exporting = ref(false);
+async function exportImages() {
+  exporting.value = true;
+
+  const zip = new JSZip();
+  const suffix = 'data:image/png;base64,';
+  for (let i = 0; i < lyrics.value.length; i++) {
+    if (images[i] && images[i].startsWith(suffix)) {
+      zip.file(`${i}.png`, images[i].substring(suffix.length), { base64: true });
+    }
+  }
+
+  const content = await zip.generateAsync({ type: 'blob' });
+  saveAs(content, 'lyrics.zip');
+
+  exporting.value = false;
+}
 </script>
 
 <style lang="scss">
@@ -313,10 +345,15 @@ body {
     .ant-tabs-tab {
       background: transparent;
       border: none;
+      padding-bottom: 8px;
 
       >.ant-tabs-tab-btn {
         color: white;
       }
+    }
+
+    .ant-tabs-extra-content {
+      align-self: flex-start;
     }
 
     .ant-tabs-tab-active {

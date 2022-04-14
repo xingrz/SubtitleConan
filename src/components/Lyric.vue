@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps } from 'vue';
+import { computed, defineEmits, defineProps, watch } from 'vue';
 
 import { Character, Sentence } from '@/utils/parseLyrics';
 import generateCanvas from '@/utils/generateCanvas';
@@ -45,6 +45,10 @@ const props = defineProps<{
   hinagara: Style;
 
   sentence: Sentence;
+}>();
+
+const emit = defineEmits<{
+  (e: 'render', image: string): void;
 }>();
 
 const background = generateCanvas(10, '#EEE');
@@ -101,6 +105,9 @@ const image = computed(() => {
 
   return canvas.toDataURL();
 });
+
+watch(image, (image) => emit('render', image));
+emit('render', image.value);
 
 type FillTextFn = typeof CanvasRenderingContext2D.prototype.fillText;
 type StrokeTextFn = typeof CanvasRenderingContext2D.prototype.strokeText;
