@@ -7,7 +7,7 @@
 <script lang="ts" setup>
 import { computed, defineProps } from 'vue';
 
-import { Sentence } from '@/utils/parseLyrics';
+import { Character, Sentence } from '@/utils/parseLyrics';
 import generateCanvas from '@/utils/generateCanvas';
 
 export interface Shadow {
@@ -26,6 +26,11 @@ export interface Style {
   font: string;
   height: number;
   bottom: number;
+}
+
+interface MeasuredCharacter extends Character {
+  kanjiWidth: number;
+  hinagaraWidth?: number;
 }
 
 const props = defineProps<{
@@ -53,7 +58,7 @@ const image = computed(() => {
     return ctx.measureText(text).width;
   }
 
-  const measurement = props.sentence.map(({ kanji, hinagara }) => {
+  const measurement: MeasuredCharacter[] = props.sentence.map(({ kanji, hinagara }) => {
     const kanjiWidth = measure(kanji, props.kanji.font);
     const hinagaraWidth = hinagara ? measure(hinagara, props.hinagara.font) : undefined;
     return { kanji, hinagara, kanjiWidth, hinagaraWidth };
@@ -68,36 +73,63 @@ const image = computed(() => {
   canvas.width = props.canvasWidth || realWidth;
   canvas.height = props.canvasHeight || realHeight;
 
+  applyShadow(ctx, props.shadow);
+  applyStroke(ctx, props.stroke);
+
+  // Draw shadow
+  if (props.shadow?.color) {
+    ctx.fillStyle = props.shadow.color;
+    drawText(ctx, ctx.fillText, measurement, realWidth);
+    drawText(ctx, ctx.strokeText, measurement, realWidth);
+  }
+
+  // Draw outline
+  if (props.stroke?.color) {
+    ctx.shadowColor = 'transparent';
+    drawText(ctx, ctx.strokeText, measurement, realWidth);
+  }
+
+  // Draw fill
+  ctx.shadowColor = 'transparent';
+  ctx.strokeStyle = 'transparent';
   ctx.fillStyle = props.color;
-
-  if (props.shadow) {
-    ctx.shadowColor = props.shadow.color || 'transparent';
-    ctx.shadowBlur = props.shadow.blur || 0;
-    ctx.shadowOffsetX = props.shadow.offsetX || 0;
-    ctx.shadowOffsetY = props.shadow.offsetY || 0;
-  }
-
-  if (props.stroke) {
-    ctx.strokeStyle = props.stroke.color || 'transparent';
-    ctx.lineWidth = props.stroke.width || 0;
-  }
-
-  measurement.reduce((offset, { kanji, kanjiWidth, hinagara, hinagaraWidth }) => {
-    const x = offset;
-    const y = canvas.height - props.kanji.bottom;
-    ctx.font = props.kanji.font;
-    if (props.stroke?.width) ctx.strokeText(kanji, x, y);
-    ctx.fillText(kanji, x, y);
-    if (hinagara && hinagaraWidth) {
-      const x = offset + kanjiWidth / 2 - hinagaraWidth / 2;
-      const y = canvas.height - props.kanji.bottom - props.kanji.height - props.hinagara.bottom;
-      ctx.font = props.hinagara.font;
-      if (props.stroke?.width) ctx.strokeText(hinagara, x, y);
-      ctx.fillText(hinagara, x, y);
-    }
-    return offset + kanjiWidth;
-  }, canvas.width / 2 - realWidth / 2);
+  drawText(ctx, ctx.fillText, measurement, realWidth);
 
   return canvas.toDataURL();
 });
+
+type FillTextFn = typeof CanvasRenderingContext2D.prototype.fillText;
+type StrokeTextFn = typeof CanvasRenderingContext2D.prototype.strokeText;
+function drawText(ctx: CanvasRenderingContext2D, drawFn: FillTextFn | StrokeTextFn,
+  measurement: MeasuredCharacter[], realWidth: number) {
+  measurement.reduce((offset, { kanji, kanjiWidth, hinagara, hinagaraWidth }) => {
+    const x = offset;
+    const y = ctx.canvas.height - props.kanji.bottom;
+    ctx.font = props.kanji.font;
+    drawFn.apply(ctx, [kanji, x, y]);
+    if (hinagara && hinagaraWidth) {
+      const x = offset + kanjiWidth / 2 - hinagaraWidth / 2;
+      const y = ctx.canvas.height - props.kanji.bottom - props.kanji.height - props.hinagara.bottom;
+      ctx.font = props.hinagara.font;
+      drawFn.apply(ctx, [hinagara, x, y]);
+    }
+    return offset + kanjiWidth;
+  }, ctx.canvas.width / 2 - realWidth / 2);
+}
+
+function applyShadow(ctx: CanvasRenderingContext2D, shadow?: Shadow) {
+  if (shadow) {
+    ctx.shadowColor = shadow.color || 'transparent';
+    ctx.shadowBlur = shadow.blur || 0;
+    ctx.shadowOffsetX = shadow.offsetX || 0;
+    ctx.shadowOffsetY = shadow.offsetY || 0;
+  }
+}
+
+function applyStroke(ctx: CanvasRenderingContext2D, stroke?: Stroke) {
+  if (stroke) {
+    ctx.strokeStyle = stroke.color || 'transparent';
+    ctx.lineWidth = stroke.width || 0;
+  }
+}
 </script>
