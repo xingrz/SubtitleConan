@@ -1,5 +1,4 @@
-export default function captureFrame(video: HTMLVideoElement): string {
-  const canvas = document.createElement('canvas');
+export default function captureFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement): string {
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   const ctx = canvas.getContext('2d')!;
