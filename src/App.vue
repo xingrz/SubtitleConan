@@ -4,6 +4,22 @@
       <template #rightExtra>
         <a-row :gutter="[8]">
           <a-col>
+            <a-input-group compact>
+              <a-button ghost @click="openProject">
+                <template #icon>
+                  <FolderOpenOutlined />
+                </template>
+                打开
+              </a-button>
+              <a-button ghost @click="saveProject">
+                <template #icon>
+                  <SaveOutlined />
+                </template>
+                保存
+              </a-button>
+            </a-input-group>
+          </a-col>
+          <a-col>
             <a-button type="primary" :loading="exporting" @click="exportImages">
               <template #icon>
                 <ExportOutlined />
@@ -53,7 +69,7 @@
 
 <script lang="ts" setup>
 import { computed, reactive, ref } from 'vue';
-import { ExportOutlined } from '@ant-design/icons-vue';
+import { FolderOpenOutlined, SaveOutlined, ExportOutlined } from '@ant-design/icons-vue';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 
@@ -175,6 +191,14 @@ function onPreviewReady({ width, height }: BackgroundSize) {
   canvasAttrs.height = height;
   canvasAttrs.clipWidth = false;
   canvasAttrs.clipHeight = false;
+}
+
+function openProject() {
+
+}
+
+function saveProject() {
+
 }
 
 const images: string[] = [];
