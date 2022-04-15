@@ -2,12 +2,16 @@
   <div id="main-nav">
     <a-tabs type="card">
       <template #rightExtra>
-        <a-button type="primary" :loading="exporting" @click="exportImages">
-          <template #icon>
-            <DownloadOutlined />
-          </template>
-          保存所有图片
-        </a-button>
+        <a-row :gutter="[8]">
+          <a-col>
+            <a-button type="primary" :loading="exporting" @click="exportImages">
+              <template #icon>
+                <ExportOutlined />
+              </template>
+              导出
+            </a-button>
+          </a-col>
+        </a-row>
       </template>
 
       <a-tab-pane key="lyrics" tab="文本">
@@ -49,7 +53,7 @@
 
 <script lang="ts" setup>
 import { computed, reactive, ref } from 'vue';
-import { DownloadOutlined } from '@ant-design/icons-vue';
+import { ExportOutlined } from '@ant-design/icons-vue';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 
@@ -214,7 +218,7 @@ body {
     .ant-tabs-tab {
       background: transparent;
       border: none;
-      padding-bottom: 8px;
+      padding-bottom: 12px;
 
       >.ant-tabs-tab-btn {
         color: white;
