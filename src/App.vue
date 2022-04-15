@@ -54,8 +54,6 @@
 <script lang="ts" setup>
 import { computed, reactive, ref } from 'vue';
 import { ExportOutlined } from '@ant-design/icons-vue';
-import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
 
 import Panel from '@/components/Panel.vue';
 import Lyric, { LyricStyle } from '@/components/Lyric.vue';
@@ -72,6 +70,7 @@ import { Stroke } from '@/utils/stroke';
 import parseLyrics from '@/utils/parseLyrics';
 import rgba from '@/utils/rgba';
 import { Font, FontWeight, toFontStyle } from '@/utils/font';
+import saveImages from '@/utils/saveImages';
 
 const lyricsText = ref('[君|きみ]と[僕|ぼく]とは[別|べつ]の[人間|いきもの]だから');
 const lyrics = computed(() => parseLyrics(lyricsText.value));
@@ -181,18 +180,7 @@ const images: string[] = [];
 const exporting = ref(false);
 async function exportImages() {
   exporting.value = true;
-
-  const zip = new JSZip();
-  const suffix = 'data:image/png;base64,';
-  for (let i = 0; i < lyrics.value.length; i++) {
-    if (images[i] && images[i].startsWith(suffix)) {
-      zip.file(`${i}.png`, images[i].substring(suffix.length), { base64: true });
-    }
-  }
-
-  const content = await zip.generateAsync({ type: 'blob' });
-  saveAs(content, 'lyrics.zip');
-
+  await saveImages(images, lyrics.value.length, 'lyrics.zip');
   exporting.value = false;
 }
 </script>
