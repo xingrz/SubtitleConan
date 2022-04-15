@@ -4,6 +4,11 @@
       <template #rightExtra>
         <a-row :gutter="[8]">
           <a-col>
+            <a-button type="link" href="https://github.com/xingrz/SubtitleConan" target="_blank">
+              Fork me on GitHub
+            </a-button>
+          </a-col>
+          <a-col>
             <a-button type="primary" :loading="exporting" @click="exportImages">
               <template #icon>
                 <ExportOutlined />
