@@ -16,322 +16,61 @@
 
       <a-tab-pane key="style" tab="样式">
         <panel>
-          <panel-unit title="汉字">
-            <a-form-item label="字体">
-              <a-row type="flex" :gutter="[8]">
-                <a-col flex="auto">
-                  <a-input v-model:value="kanjiFont.family" />
-                </a-col>
-                <a-col flex="8em">
-                  <a-select v-model:value="kanjiFont.weight" :options="fontWeightOptions" />
-                </a-col>
-              </a-row>
-            </a-form-item>
-            <a-form-item label="字号">
-              <a-row type="flex" :gutter="[8]">
-                <a-col flex="8em">
-                  <a-input-number v-model:value="kanjiFont.size" :min="0" addon-after="px" class="monospace" />
-                </a-col>
-                <a-col flex="auto" :style="{ maxWidth: '200px' }">
-                  <a-slider v-model:value="kanjiFont.size" :min="0" :max="100" />
-                </a-col>
-              </a-row>
-            </a-form-item>
-            <a-form-item label="间距">
-              <a-row type="flex" :gutter="[8]">
-                <a-col flex="8em">
-                  <a-input-number v-model:value="kanjiAttrs.spacing" :min="-10" addon-after="px" class="monospace" />
-                </a-col>
-                <a-col flex="auto" :style="{ maxWidth: '200px' }">
-                  <a-slider v-model:value="kanjiAttrs.spacing" :min="-10" :max="10" />
-                </a-col>
-              </a-row>
-            </a-form-item>
-            <a-form-item label="缩放">
-              <a-row type="flex" :gutter="[8]">
-                <a-col flex="8em">
-                  <a-input-number v-model:value="kanjiAttrs.scale" :min="1" addon-before="%" class="monospace" />
-                </a-col>
-                <a-col flex="auto" :style="{ maxWidth: '200px' }">
-                  <a-slider v-model:value="kanjiAttrs.scale" :min="50" :max="150" />
-                </a-col>
-              </a-row>
-            </a-form-item>
-            <a-form-item label="边距">
-              <a-row type="flex" :gutter="[8]">
-                <a-col flex="8em">
-                  <a-input-number v-model:value="kanjiAttrs.bottom" :min="-20" addon-after="px" class="monospace" />
-                </a-col>
-                <a-col flex="auto" :style="{ maxWidth: '200px' }">
-                  <a-slider v-model:value="kanjiAttrs.bottom" :min="-20" :max="300" />
-                </a-col>
-              </a-row>
-            </a-form-item>
-          </panel-unit>
-          <panel-unit title="注音">
-            <a-form-item label="字体">
-              <a-row type="flex" :gutter="[8]">
-                <a-col flex="auto">
-                  <a-input v-model:value="hinagaraFont.family" />
-                </a-col>
-                <a-col flex="8em">
-                  <a-select v-model:value="hinagaraFont.weight" :options="fontWeightOptions" />
-                </a-col>
-              </a-row>
-            </a-form-item>
-            <a-form-item label="字号">
-              <a-row type="flex" :gutter="[8]">
-                <a-col flex="8em">
-                  <a-input-number v-model:value="hinagaraFont.size" :min="0" addon-after="px" class="monospace" />
-                </a-col>
-                <a-col flex="auto" :style="{ maxWidth: '200px' }">
-                  <a-slider v-model:value="hinagaraFont.size" :min="0" :max="100" />
-                </a-col>
-              </a-row>
-            </a-form-item>
-            <a-form-item label="间距">
-              <a-row type="flex" :gutter="[8]">
-                <a-col flex="8em">
-                  <a-input-number v-model:value="hinagaraAttrs.spacing" :min="-10" addon-after="px" class="monospace" />
-                </a-col>
-                <a-col flex="auto" :style="{ maxWidth: '200px' }">
-                  <a-slider v-model:value="hinagaraAttrs.spacing" :min="-10" :max="10" />
-                </a-col>
-              </a-row>
-            </a-form-item>
-            <a-form-item label="缩放">
-              <a-row type="flex" :gutter="[8]">
-                <a-col flex="8em">
-                  <a-input-number v-model:value="hinagaraAttrs.scale" :min="1" addon-before="%" class="monospace" />
-                </a-col>
-                <a-col flex="auto" :style="{ maxWidth: '200px' }">
-                  <a-slider v-model:value="hinagaraAttrs.scale" :min="50" :max="150" />
-                </a-col>
-              </a-row>
-            </a-form-item>
-            <a-form-item label="边距">
-              <a-row type="flex" :gutter="[8]">
-                <a-col flex="8em">
-                  <a-input-number v-model:value="hinagaraAttrs.bottom" :min="-20" addon-after="px" class="monospace" />
-                </a-col>
-                <a-col flex="auto" :style="{ maxWidth: '200px' }">
-                  <a-slider v-model:value="hinagaraAttrs.bottom" :min="-20" :max="100" />
-                </a-col>
-              </a-row>
-            </a-form-item>
-          </panel-unit>
-          <panel-unit title="填充">
-            <a-form-item label="颜色">
-              <a-row type="flex" :gutter="[8]">
-                <a-col flex="7em">
-                  <a-input v-model:value="colorValue" prefix="#" class="monospace" />
-                </a-col>
-              </a-row>
-            </a-form-item>
-          </panel-unit>
+          <lyric-style-panel title="汉字" :font="kanjiFont" :attrs="kanjiAttrs" :bottom-min="-20" :bottom-max="300" />
+          <lyric-style-panel title="注音" :font="hinagaraFont" :attrs="hinagaraAttrs" :bottom-min="-20"
+            :bottom-max="100" />
+          <lyric-fill-panel :fill="fillAttrs" />
         </panel>
       </a-tab-pane>
 
       <a-tab-pane key="effects" tab="效果">
         <panel>
-          <panel-unit title="阴影">
-            <a-form-item label="颜色">
-              <a-row type="flex" :gutter="[8]">
-                <a-col flex="7em">
-                  <a-input v-model:value="shadow.color" prefix="#" class="monospace" />
-                </a-col>
-                <a-col flex="8em">
-                  <a-input-number v-model:value="shadow.opacity" addon-before="%" :min="0" :max="100"
-                    class="monospace" />
-                </a-col>
-                <a-col flex="auto" :style="{ maxWidth: '100px' }">
-                  <a-slider v-model:value="shadow.opacity" :min="0" :max="100" />
-                </a-col>
-              </a-row>
-            </a-form-item>
-            <a-form-item label="偏移">
-              <a-row type="flex" :gutter="[8]">
-                <a-col flex="8em">
-                  <a-input-number v-model:value="shadow.offsetX" addon-after="px" class="monospace" />
-                </a-col>
-                <a-col flex="auto" :style="{ maxWidth: '200px' }">
-                  <a-slider v-model:value="shadow.offsetX" :min="-10" :max="10" />
-                </a-col>
-              </a-row>
-              <a-row type="flex" :gutter="[8]" :style="{ marginTop: '8px' }">
-                <a-col flex="8em">
-                  <a-input-number v-model:value="shadow.offsetY" addon-after="px" class="monospace" />
-                </a-col>
-                <a-col flex="auto" :style="{ maxWidth: '200px' }">
-                  <a-slider v-model:value="shadow.offsetY" :min="-10" :max="10" />
-                </a-col>
-              </a-row>
-            </a-form-item>
-            <a-form-item label="模糊">
-              <a-row type="flex" :gutter="[8]">
-                <a-col flex="8em">
-                  <a-input-number v-model:value="shadow.blur" addon-after="px" :min="0" :max="100" class="monospace" />
-                </a-col>
-                <a-col flex="auto" :style="{ maxWidth: '200px' }">
-                  <a-slider v-model:value="shadow.blur" :min="0" :max="100" />
-                </a-col>
-              </a-row>
-            </a-form-item>
-          </panel-unit>
-          <panel-unit title="描边">
-            <a-form-item label="颜色">
-              <a-row type="flex" :gutter="[8]">
-                <a-col flex="7em">
-                  <a-input v-model:value="stroke.color" prefix="#" class="monospace" />
-                </a-col>
-                <a-col flex="8em">
-                  <a-input-number v-model:value="stroke.opacity" addon-before="%" :min="0" :max="100"
-                    class="monospace" />
-                </a-col>
-                <a-col flex="auto" :style="{ maxWidth: '100px' }">
-                  <a-slider v-model:value="stroke.opacity" :min="0" :max="100" />
-                </a-col>
-              </a-row>
-            </a-form-item>
-            <a-form-item label="宽度">
-              <a-row type="flex" :gutter="[8]">
-                <a-col flex="8em">
-                  <a-input-number v-model:value="stroke.width" addon-after="px" :min="0" class="monospace" />
-                </a-col>
-                <a-col flex="auto" :style="{ maxWidth: '200px' }">
-                  <a-slider v-model:value="stroke.width" :min="0" :max="20" />
-                </a-col>
-              </a-row>
-            </a-form-item>
-          </panel-unit>
+          <shadow-effect-panel :shadow="shadowAttrs" />
+          <stroke-effect-panel :stroke="strokeAttrs" />
         </panel>
       </a-tab-pane>
 
       <a-tab-pane key="canvas" tab="画布">
         <panel>
-          <panel-unit title="画布大小">
-            <a-form-item label="宽度">
-              <a-row type="flex" :gutter="[8]" align="middle">
-                <a-col flex="10em">
-                  <a-input-number v-model:value="canvas.width" :disabled="canvas.clipWidth && !background.enabled"
-                    addon-after="px" class="monospace" />
-                </a-col>
-                <a-col>
-                  <a-checkbox v-model:checked="canvas.clipWidth" :disabled="background.enabled">
-                    裁切
-                  </a-checkbox>
-                </a-col>
-              </a-row>
-            </a-form-item>
-            <a-form-item label="高度">
-              <a-row type="flex" :gutter="[8]" align="middle">
-                <a-col flex="10em">
-                  <a-input-number v-model:value="canvas.height" :disabled="canvas.clipHeight && !background.enabled"
-                    addon-after="px" class="monospace" />
-                </a-col>
-                <a-col>
-                  <a-checkbox v-model:checked="canvas.clipHeight" :disabled="background.enabled">
-                    裁切
-                  </a-checkbox>
-                </a-col>
-              </a-row>
-            </a-form-item>
-          </panel-unit>
-          <panel-unit title="预览">
-            <a-form-item label="缩放">
-              <a-row type="flex" :gutter="[8]">
-                <a-col flex="auto" :style="{ maxWidth: '300px' }">
-                  <a-slider v-model:value="canvas.scale" :min="10" :max="100"
-                    :marks="{ 10: '10%', 25: '25%', 50: '50%', 75: '75%', 100: '100%' }" />
-                </a-col>
-              </a-row>
-            </a-form-item>
-            <a-form-item label="背景">
-              <a-row type="flex" :gutter="[8]">
-                <a-col>
-                  <a-radio-group v-model:value="background.enabled">
-                    <a-radio-button :value="false">透明</a-radio-button>
-                    <a-radio-button :value="true">视频</a-radio-button>
-                  </a-radio-group>
-                </a-col>
-                <a-col flex="auto" v-show="background.enabled">
-                  <a-upload :customRequest="loadPreview" :showUploadList="false">
-                    <a-button type="primary" :loading="preview.loading">选择视频</a-button>
-                  </a-upload>
-                </a-col>
-              </a-row>
-              <a-row type="flex" :gutter="[8]" :style="{ marginTop: '8px' }"
-                v-if="background.enabled && preview.duration > 0">
-                <a-col flex="auto">
-                  <a-slider v-model:value="preview.current" :min="0" :max="preview.duration" />
-                </a-col>
-              </a-row>
-            </a-form-item>
-          </panel-unit>
+          <canvas-panel :canvas="canvasAttrs" :background-enabled="previewAttrs.backgroundEnabled" />
+          <preview-panel :preview="previewAttrs" @background-ready="onPreviewReady" />
         </panel>
       </a-tab-pane>
     </a-tabs>
   </div>
   <div id="lyrics">
     <div v-for="(lyric, index) in lyrics" :style="{ margin: '10px' }">
-      <lyric :canvas-width="canvasStyle.width" :canvas-height="canvasStyle.height" :canvas-scale="canvas.scale"
+      <lyric :canvas-width="canvasStyle.width" :canvas-height="canvasStyle.height" :canvas-scale="previewStyle.scale"
         :color="color" :shadow="shadowStyle" :stroke="strokeStyle" :kanji="kanjiStyle" :hinagara="hinagaraStyle"
-        :sentence="lyric" :background="canvasStyle.background" @render="(image) => images[index] = image" />
+        :sentence="lyric" :background="previewStyle.background" @render="(image) => images[index] = image" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, ref, watch } from 'vue';
-import { SelectProps } from 'ant-design-vue';
+import { computed, reactive, ref } from 'vue';
 import { DownloadOutlined } from '@ant-design/icons-vue';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
-import { once } from 'events';
 
 import Panel from '@/components/Panel.vue';
-import PanelUnit from '@/components/PanelUnit.vue';
-import Lyric, { Style } from '@/components/Lyric.vue';
+import Lyric, { LyricStyle } from '@/components/Lyric.vue';
+
+import LyricStylePanel, { TextAttrs } from '@/panels/LyricStylePanel.vue';
+import LyricFillPanel, { FillAttrs } from '@/panels/LyricFillPanel.vue';
+import ShadowEffectPanel, { ShadowAttrs } from '@/panels/ShadowEffectPanel.vue';
+import StrokeEffectPanel, { StrokeAttrs } from '@/panels/StrokeEffectPanel.vue';
+import CanvasPanel, { CanvasAttrs } from '@/panels/CanvasPanel.vue';
+import PreviewPanel, { BackgroundSize, PreviewAttrs } from '@/panels/PreviewPanel.vue';
 
 import { Shadow } from '@/utils/shadow';
 import { Stroke } from '@/utils/stroke';
 import parseLyrics from '@/utils/parseLyrics';
 import rgba from '@/utils/rgba';
 import { Font, FontWeight, toFontStyle } from '@/utils/font';
-import captureFrame from '@/utils/captureFrame';
 
-const canvas = reactive({
-  width: 1920,
-  height: 1080,
-  clipWidth: false,
-  clipHeight: true,
-  scale: 100,
-});
-
-const background = reactive<{
-  enabled: boolean;
-  image?: string;
-}>({
-  enabled: false,
-});
-
-const canvasStyle = computed(() => ({
-  width: canvas.clipWidth && !background.enabled ? undefined : canvas.width,
-  height: canvas.clipHeight && !background.enabled ? undefined : canvas.height,
-  background: background.enabled ? background.image : undefined,
-}));
-
-const fontWeightOptions = ref<SelectProps['options']>([
-  { value: FontWeight.THIN, label: 'Thin' },
-  { value: FontWeight.EXTRA_LIGHT, label: 'Extra Light' },
-  { value: FontWeight.LIGHT, label: 'Light' },
-  { value: FontWeight.REGULAR, label: 'Regular' },
-  { value: FontWeight.MEDIUM, label: 'Medium' },
-  { value: FontWeight.SEMI_BOLD, label: 'Semi Bold' },
-  { value: FontWeight.BOLD, label: 'Bold' },
-  { value: FontWeight.EXTRA_BOLD, label: 'Extra Bold' },
-  { value: FontWeight.BLACK, label: 'Black' },
-]);
+const lyricsText = ref('[君|きみ]と[僕|ぼく]とは[別|べつ]の[人間|いきもの]だから');
+const lyrics = computed(() => parseLyrics(lyricsText.value));
 
 const kanjiFont = reactive<Font>({
   family: 'A-OTF Shin Go Pro',
@@ -339,13 +78,13 @@ const kanjiFont = reactive<Font>({
   weight: FontWeight.REGULAR,
 });
 
-const kanjiAttrs = reactive({
+const kanjiAttrs = reactive<TextAttrs>({
   spacing: -2,
   scale: 110,
   bottom: 10,
 });
 
-const kanjiStyle = computed<Style>(() => ({
+const kanjiStyle = computed<LyricStyle>(() => ({
   font: toFontStyle(kanjiFont),
   height: kanjiFont.size,
   spacing: kanjiAttrs.spacing,
@@ -359,13 +98,13 @@ const hinagaraFont = reactive<Font>({
   weight: FontWeight.SEMI_BOLD,
 });
 
-const hinagaraAttrs = reactive({
+const hinagaraAttrs = reactive<TextAttrs>({
   spacing: -2,
   scale: 110,
   bottom: 0,
 });
 
-const hinagaraStyle = computed<Style>(() => ({
+const hinagaraStyle = computed<LyricStyle>(() => ({
   font: toFontStyle(hinagaraFont),
   height: hinagaraFont.size,
   spacing: hinagaraAttrs.spacing,
@@ -373,10 +112,13 @@ const hinagaraStyle = computed<Style>(() => ({
   bottom: hinagaraAttrs.bottom,
 }));
 
-const colorValue = ref('FFFFFF');
-const color = computed(() => `#${colorValue.value}`);
+const fillAttrs = reactive<FillAttrs>({
+  color: 'FFFFFF',
+});
 
-const shadow = reactive({
+const color = computed(() => `#${fillAttrs.color}`);
+
+const shadowAttrs = reactive<ShadowAttrs>({
   color: '000000',
   opacity: 100,
   blur: 2,
@@ -385,25 +127,51 @@ const shadow = reactive({
 });
 
 const shadowStyle = computed<Shadow>(() => ({
-  color: rgba(shadow.color, shadow.opacity / 100),
-  blur: shadow.blur,
-  offsetX: shadow.offsetX,
-  offsetY: shadow.offsetY,
+  color: rgba(shadowAttrs.color, shadowAttrs.opacity / 100),
+  blur: shadowAttrs.blur,
+  offsetX: shadowAttrs.offsetX,
+  offsetY: shadowAttrs.offsetY,
 }));
 
-const stroke = reactive({
+const strokeAttrs = reactive<StrokeAttrs>({
   color: '000000',
   opacity: 0,
   width: 0,
 });
 
 const strokeStyle = computed<Stroke>(() => ({
-  color: rgba(stroke.color, stroke.opacity / 100),
-  width: stroke.width,
+  color: rgba(strokeAttrs.color, strokeAttrs.opacity / 100),
+  width: strokeAttrs.width,
 }));
 
-const lyricsText = ref('[君|きみ]と[僕|ぼく]とは[別|べつ]の[人間|いきもの]だから');
-const lyrics = computed(() => parseLyrics(lyricsText.value));
+const canvasAttrs = reactive<CanvasAttrs>({
+  width: 1920,
+  height: 1080,
+  clipWidth: false,
+  clipHeight: true,
+});
+
+const canvasStyle = computed(() => ({
+  width: canvasAttrs.clipWidth && !previewAttrs.backgroundEnabled ? undefined : canvasAttrs.width,
+  height: canvasAttrs.clipHeight && !previewAttrs.backgroundEnabled ? undefined : canvasAttrs.height,
+}));
+
+const previewAttrs = reactive<PreviewAttrs>({
+  scale: 100,
+  backgroundEnabled: false,
+});
+
+const previewStyle = computed(() => ({
+  scale: previewAttrs.scale / 100,
+  background: previewAttrs.backgroundEnabled ? previewAttrs.backgroundImage : undefined,
+}));
+
+function onPreviewReady({ width, height }: BackgroundSize) {
+  canvasAttrs.width = width;
+  canvasAttrs.height = height;
+  canvasAttrs.clipWidth = false;
+  canvasAttrs.clipHeight = false;
+}
 
 const images: string[] = [];
 const exporting = ref(false);
@@ -423,40 +191,6 @@ async function exportImages() {
 
   exporting.value = false;
 }
-
-const preview = reactive({
-  loading: false,
-  duration: 0,
-  current: 0,
-});
-
-const video = document.createElement('video');
-video.defaultMuted = true;
-
-async function loadPreview({ file }: { file: File }): Promise<void> {
-  preview.loading = true;
-  video.src = URL.createObjectURL(file);
-  await once(video, 'canplaythrough');
-
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.clipWidth = false;
-  canvas.clipHeight = false;
-
-  preview.duration = video.duration;
-  preview.current = 0;
-  await seekPreview(0);
-
-  preview.loading = false;
-}
-
-async function seekPreview(time: number): Promise<void> {
-  video.currentTime = time;
-  await once(video, 'seeked');
-  background.image = captureFrame(video);
-}
-
-watch(preview, ({ current }) => seekPreview(current));
 </script>
 
 <style lang="scss">

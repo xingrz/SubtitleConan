@@ -16,7 +16,7 @@ import generateCanvas from '@/utils/generateCanvas';
 import { applyShadow, Shadow } from '@/utils/shadow';
 import { applyStroke, Stroke } from '@/utils/stroke';
 
-export interface Style {
+export interface LyricStyle {
   font: string;
   height: number;
   spacing: number;
@@ -42,8 +42,8 @@ const props = defineProps<{
   shadow?: Shadow;
   stroke?: Stroke;
 
-  kanji: Style;
-  hinagara: Style;
+  kanji: LyricStyle;
+  hinagara: LyricStyle;
 
   sentence: Sentence;
 }>();
@@ -88,8 +88,8 @@ const measurement = computed(() => {
 });
 
 const scaledSize = computed(() => ({
-  width: measurement.value.targetWidth * (props.canvasScale / 100),
-  height: measurement.value.targetHeight * (props.canvasScale / 100),
+  width: measurement.value.targetWidth * props.canvasScale,
+  height: measurement.value.targetHeight * props.canvasScale,
 }));
 
 const image = computed(() => {
