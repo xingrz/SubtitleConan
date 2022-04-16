@@ -1,52 +1,50 @@
 <template>
-  <div id="main-nav">
-    <a-tabs type="card">
-      <template #rightExtra>
-        <a-row :gutter="[8]">
-          <a-col>
-            <a-button type="link" href="https://github.com/xingrz/SubtitleConan" target="_blank">
-              Fork me on GitHub
-            </a-button>
-          </a-col>
-          <a-col>
-            <a-button type="primary" :loading="exporting" @click="exportImages">
-              <template #icon>
-                <ExportOutlined />
-              </template>
-              导出
-            </a-button>
-          </a-col>
-        </a-row>
-      </template>
-
-      <a-tab-pane key="lyrics" tab="文本">
-        <a-textarea :style="{ fontFamily: 'monospace', height: '200px' }" v-model:value="lyricsText" />
-      </a-tab-pane>
-
-      <a-tab-pane key="style" tab="样式">
-        <panel>
-          <lyric-style-panel title="汉字" :font="kanjiFont" :attrs="kanjiAttrs" :bottom-min="-20" :bottom-max="300" />
-          <lyric-style-panel title="注音" :font="hinagaraFont" :attrs="hinagaraAttrs" :bottom-min="-20"
-            :bottom-max="100" />
-          <lyric-fill-panel :fill="fillAttrs" />
-        </panel>
-      </a-tab-pane>
-
-      <a-tab-pane key="effects" tab="效果">
-        <panel>
-          <shadow-effect-panel :shadow="shadowAttrs" />
-          <stroke-effect-panel :stroke="strokeAttrs" />
-        </panel>
-      </a-tab-pane>
-
-      <a-tab-pane key="canvas" tab="画布">
-        <panel>
-          <canvas-panel :canvas="canvasAttrs" :background-enabled="previewAttrs.backgroundEnabled" />
-          <preview-panel :preview="previewAttrs" @background-ready="onPreviewReady" />
-        </panel>
-      </a-tab-pane>
-    </a-tabs>
-  </div>
+  <a-affix :ref="(ref) => navAffix = ref">
+    <div id="main-nav">
+      <a-tabs type="card">
+        <template #rightExtra>
+          <a-row :gutter="[8]">
+            <a-col>
+              <a-button type="link" href="https://github.com/xingrz/SubtitleConan" target="_blank">
+                Fork me on GitHub
+              </a-button>
+            </a-col>
+            <a-col>
+              <a-button type="primary" :loading="exporting" @click="exportImages">
+                <template #icon>
+                  <ExportOutlined />
+                </template>
+                导出
+              </a-button>
+            </a-col>
+          </a-row>
+        </template>
+        <a-tab-pane key="lyrics" tab="文本">
+          <a-textarea :style="{ fontFamily: 'monospace', height: '200px' }" v-model:value="lyricsText" />
+        </a-tab-pane>
+        <a-tab-pane key="style" tab="样式">
+          <panel>
+            <lyric-style-panel title="汉字" :font="kanjiFont" :attrs="kanjiAttrs" :bottom-min="-20" :bottom-max="300" />
+            <lyric-style-panel title="注音" :font="hinagaraFont" :attrs="hinagaraAttrs" :bottom-min="-20"
+              :bottom-max="100" />
+            <lyric-fill-panel :fill="fillAttrs" />
+          </panel>
+        </a-tab-pane>
+        <a-tab-pane key="effects" tab="效果">
+          <panel>
+            <shadow-effect-panel :shadow="shadowAttrs" />
+            <stroke-effect-panel :stroke="strokeAttrs" />
+          </panel>
+        </a-tab-pane>
+        <a-tab-pane key="canvas" tab="画布">
+          <panel>
+            <canvas-panel :canvas="canvasAttrs" :background-enabled="previewAttrs.backgroundEnabled" />
+            <preview-panel :preview="previewAttrs" @background-ready="onPreviewReady" />
+          </panel>
+        </a-tab-pane>
+      </a-tabs>
+    </div>
+  </a-affix>
   <div id="lyrics">
     <div v-for="(lyric, index) in lyrics" :style="{ margin: '10px' }">
       <lyric :canvas-width="canvasStyle.width" :canvas-height="canvasStyle.height" :canvas-scale="previewStyle.scale"
@@ -58,6 +56,7 @@
 
 <script lang="ts" setup>
 import { computed, reactive, ref } from 'vue';
+import { AffixInstance } from 'ant-design-vue/lib/affix';
 import { ExportOutlined } from '@ant-design/icons-vue';
 
 import Panel from '@/components/Panel.vue';
@@ -188,6 +187,11 @@ async function exportImages() {
   await saveImages(images, lyrics.value.length, 'lyrics.zip');
   exporting.value = false;
 }
+
+const navAffix = ref<AffixInstance>();
+window.addEventListener('resize', () => {
+  navAffix.value?.updatePosition();
+});
 </script>
 
 <style lang="scss">
@@ -197,6 +201,8 @@ body {
 
 #main-nav {
   padding: 8px;
+  background: #283237;
+  transition: background 250ms;
 
   >.ant-tabs-card {
     .ant-tabs-content {
@@ -238,6 +244,11 @@ body {
       margin-bottom: 0;
     }
   }
+}
+
+.ant-affix #main-nav {
+  box-shadow: rgba(0, 0, 0, 1.0) 0px 0px 4px;
+  background: #485257;
 }
 
 .monospace {
