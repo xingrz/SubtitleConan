@@ -109,8 +109,24 @@ const image = computed(() => {
   // Draw shadow
   if (props.shadow?.color) {
     ctx.fillStyle = props.shadow.color;
-    drawText(ctx, ctx.fillText, props.sentence, slices, realWidth);
-    drawText(ctx, ctx.strokeText, props.sentence, slices, realWidth);
+    if (props.shadow.type == 'continious') {
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      const { offsetX, offsetY } = props.shadow || {};
+      const steps = Math.max(Math.abs(offsetX || 0), Math.abs(offsetY || 0)) * 2;
+      for (let i = 0; i <= steps; i++) {
+        const x = (offsetX || 0) * (i / steps);
+        const y = (offsetY || 0) * (i / steps);
+        ctx.save();
+        ctx.translate(x, y);
+        drawText(ctx, ctx.fillText, props.sentence, slices, realWidth);
+        drawText(ctx, ctx.strokeText, props.sentence, slices, realWidth);
+        ctx.restore();
+      }
+    } else {
+      drawText(ctx, ctx.fillText, props.sentence, slices, realWidth);
+      drawText(ctx, ctx.strokeText, props.sentence, slices, realWidth);
+    }
   }
 
   // Draw outline

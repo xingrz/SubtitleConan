@@ -131,6 +131,7 @@ const shadowAttrs = reactive<ShadowAttrs>({
   blur: 2,
   offsetX: 2,
   offsetY: 2,
+  type: 'normal',
 });
 
 const shadowStyle = computed<Shadow>(() => ({
@@ -138,6 +139,7 @@ const shadowStyle = computed<Shadow>(() => ({
   blur: shadowAttrs.blur,
   offsetX: shadowAttrs.offsetX,
   offsetY: shadowAttrs.offsetY,
+  type: shadowAttrs.type,
 }));
 
 const strokeAttrs = reactive<StrokeAttrs>({

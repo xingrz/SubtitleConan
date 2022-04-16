@@ -3,7 +3,10 @@ export interface Shadow {
   blur?: number;
   offsetX?: number;
   offsetY?: number;
+  type: ShadowType;
 }
+
+export type ShadowType = 'normal' | 'continious';
 
 export function applyShadow(ctx: CanvasRenderingContext2D, shadow?: Shadow) {
   if (shadow) {
