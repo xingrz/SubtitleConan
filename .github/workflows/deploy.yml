@@ -33,6 +33,6 @@ jobs:
           allow_empty_commit: false
           build_dir: dist
           commit_message: "Auto deploy for commit ${{ steps.short-sha.outputs.sha }}"
-          fqdn: conan.xingrz.me
+          fqdn: subtitle.xingrz.me
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

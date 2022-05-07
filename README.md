@@ -1,4 +1,4 @@
-[Subtitle Conan](https://conan.xingrz.me) [![Auto deploy](https://github.com/xingrz/SubtitleConan/actions/workflows/deploy.yml/badge.svg)](https://github.com/xingrz/SubtitleConan/actions/workflows/deploy.yml)
+[Subtitle Conan](https://subtitle.xingrz.me) [![Auto deploy](https://github.com/xingrz/SubtitleConan/actions/workflows/deploy.yml/badge.svg)](https://github.com/xingrz/SubtitleConan/actions/workflows/deploy.yml)
 ==========
 
 [![license][license-img]][license-url] [![issues][issues-img]][issues-url] [![commits][commits-img]][commits-url]
